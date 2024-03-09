@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   fill="currentColor"
+   version="1.1"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
+   class="octicon octicon-note"
+   aria-hidden="true"
+   id="svg1"
+   sodipodi:docname="success.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="46.3125"
+     inkscape:cx="8"
+     inkscape:cy="8"
+     inkscape:window-width="1680"
+     inkscape:window-height="979"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <path
+     style="display:inline;fill:#00c853;fill-opacity:1;stroke:#00c853;stroke-width:0.000475034;stroke-opacity:1"
+     d="M 5.7759784,12.699396 C 5.734413,12.684297 5.6732131,12.657485 5.6399786,12.639813 5.6067444,12.622141 4.811691,11.84059 3.8731938,10.903032 2.622457,9.6535467 2.1514123,9.1695531 2.1090752,9.0904184 c -0.05157,-0.096393 -0.05776,-0.1311018 -0.05776,-0.3238867 0,-0.1924832 0.00625,-0.227645 0.057545,-0.3238866 0.1532077,-0.2874395 0.4786941,-0.4554127 0.77396,-0.3994168 0.246764,0.046798 0.2351604,0.036561 1.7165721,1.5143277 L 6.0031026,10.957812 9.4037107,7.5563643 C 13.221513,3.737619 12.91918,4.0160866 13.245933,4.0174352 c 0.219073,9.041e-4 0.392159,0.077704 0.540213,0.2396989 0.144719,0.1583457 0.201035,0.3129932 0.191399,0.5255919 -0.01401,0.3091587 0.268848,0.00636 -3.855381,4.1271817 -3.5896335,3.5866703 -3.7355295,3.7294453 -3.8557675,3.7732793 -0.1430505,0.05215 -0.3707595,0.05968 -0.4904181,0.01621 z"
+     id="path3" />
+</svg>
