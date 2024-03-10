@@ -2,6 +2,7 @@
 #import "utils.typ": *
 #import "covers.typ": *
 #import "figures.typ": *
+#import "math.typ": *
 
 // 导入第三方包
 #import "@preview/lovelace:0.2.0": *
