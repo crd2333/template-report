@@ -1,0 +1,16 @@
+[package]
+name = "template-report"
+version = "0.1.0"
+entrypoint = "lib.typ"
+repository = "https://github.com/crd2333/template-report"
+authors = ["crd2333"]
+license = "MIT-0"
+description = "A report template."
+keywords = ["report", "ZJU", "Zhe Jiang University"]
+categories = ["report"]
+disciplines = ["computer-science"]
+
+[template]
+path = "template"
+entrypoint = "main.typ"
+thumbnail = "thumbnail.png"

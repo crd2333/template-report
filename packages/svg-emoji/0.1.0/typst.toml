@@ -5,3 +5,4 @@ entrypoint = "lib.typ"
 authors = ["Po' Lazarus"]
 license = "MIT"
 description = "Working emoji support through SVG files"
+repository = "https://github.com/polazarus/typst-svg-emoji"

@@ -1,4 +1,4 @@
-#import "../template/template.typ": *
+#import "../lib.typ": *
 #show: project.with(
   title: "Test Title",
   title_2: "Project 1",
@@ -67,7 +67,7 @@ _斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体，一般用
 
 === 图片
 
-#fig(caption: "测试图片, 浙江大学", image("../template/assets/校名.jpg")) <test>
+#fig(caption: "测试图片, 浙江大学", image("../assets/校名.jpg")) <test>
 
 图片测试引用 @fig:test
 
@@ -160,7 +160,7 @@ columns: (auto, auto),
 
 = 第二个大标题 <caption_2>
 
-#fig(image("../template/assets/校名.jpg"), caption: "测试图片, 浙江大学") <test2>
+#fig(image("../assets/校名.jpg"), caption: "测试图片, 浙江大学") <test2>
 
 图片测试引用@fig:test2，可以看到现在的编号是 2 开头。
 
@@ -323,4 +323,4 @@ lovelace包，可以用来写伪代码，比如：
 )
 
 #pagebreak()
-#bibliography("../template/assets/exbib.bib", style: "ieee", title: "References")
+#bibliography("../assets/exbib.bib", style: "ieee", title: "References")

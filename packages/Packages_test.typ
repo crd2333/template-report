@@ -24,8 +24,9 @@
 == Details
 #lorem(30)
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
+\
+\
+\
 *colorful-boxes: 预定义的多彩框*
 #import "@preview/colorful-boxes:1.2.0": *
 #colorbox(
@@ -42,8 +43,9 @@
   centering: false
 )[#lorem(20)]
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
+\
+\
+\
 *codelst: 用于渲染源代码的 Typst 包*
 #import "@preview/codelst:1.0.0": sourcecode
 #sourcecode[```typ
@@ -57,8 +59,9 @@
 This report is embedded in the ArtosFlow project. ArtosFlow is a project of the Artos Institute.
 ```]
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
+\
+\
+\
 *showybox: 为 Typst 创建丰富多彩且可自定义的框*
 #import "@preview/showybox:2.0.1": showybox
 #showybox([Hello world!])
@@ -81,8 +84,31 @@ This report is embedded in the ArtosFlow project. ArtosFlow is a project of the 
   lorem(12)
 )
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
+\
+\
+\
+*easy-pinyin: 轻松编写汉语拼音*
+#import "@preview/easy-pinyin:0.1.0": pinyin, zhuyin
+汉（#pinyin[ha4n]）语（#pinyin[yu3]）拼（#pinyin[pi1n]）音（#pinyin[yi1n]）。
+#let per-char(f) = [#f(delimiter: "|")[汉|语|拼|音][ha4n|yu3|pi1n|yi1n]]
+#let per-word(f) = [#f(delimiter: "|")[汉语|拼音][ha4nyu3|pi1nyi1n]]
+#let all-in-one(f) = [#f[汉语拼音][ha4nyu3pi1nyi1n]]
+#let example(f) = (per-char(f), per-word(f), all-in-one(f))
+// argument of scale and spacing
+#let arguments = ((0.5, none), (0.7, none), (0.7, 0.1em), (1.0, none), (1.0, 0.2em))
+#table(
+  columns: (auto, auto, auto, auto),
+  align: (center + horizon, center, center, center),
+  [arguments], [per char], [per word], [all in one],
+  ..arguments.map(((scale, spacing)) => (
+    text(size: 0.7em)[#scale,#repr(spacing)],
+    ..example(zhuyin.with(scale: scale, spacing: spacing))
+  )).flatten(),
+)
+
+\
+\
+\
 *lovelace: 伪代码书写的算法，没有预定立场，十分灵活*
 #import "@preview/lovelace:0.1.0": *
 #show: setup-lovelace
@@ -104,18 +130,48 @@ This report is embedded in the ArtosFlow project. ArtosFlow is a project of the 
   )
 )
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
+\
+\
+\
 *nth: 将英文序数添加到数字中，例如 1st、3nd、2rd、4th*
 #import "@preview/nth:0.2.0": nth
 #nth(2)\
 #nth(3)\
 #nth(4)
 
+// \
+// \
+// \
+// *lemmify: 定理排版*
+// #import "@preview/lemmify:0.1.4": *
+// #let my-thm-style(
+//   thm-type, name, number, body
+// ) = grid(
+//   columns: (1fr, 3fr),
+//   column-gutter: 1em,
+//   stack(spacing: .5em, strong(thm-type), number, emph(name)),
+//   body
+// )
+// #let my-styling = (
+//   thm-styling: my-thm-style
+// )
+// #let (
+//   theorem, rules
+// ) = default-theorems("thm-group", lang: "en", ..my-styling)
+// #show: rules
+// #show thm-selector("thm-group"): box.with(inset: 1em)
+// #lorem(20)
+// #theorem[
+//   #lorem(40)
+// ]
+// #lorem(20)
+// #theorem(name: "Some theorem")[
+//   #lorem(30)
+// ]
 
-
-#v(3em)
-#line(length: 100%, stroke: aqua)
+\
+\
+\
 *tablex: 在 Typst 中提供更强大和可定制的表格*
 #import "@preview/tablex:0.0.5": tablex, gridx, hlinex, vlinex, colspanx, rowspanx
 #tablex(
@@ -149,8 +205,9 @@ This report is embedded in the ArtosFlow project. ArtosFlow is a project of the 
   [f], (),             [g], [L],
 )
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
+\
+\
+\
 *tbl: 简洁编写复杂的表格*
 #import "@preview/tbl:0.0.4"
 #show: tbl.template.with(box: true, tab: "|")
@@ -166,9 +223,10 @@ _
 TeX Live|2015
 ```
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
-*syntree: 用于渲染语言学中的语法树/解析树*
+\
+\
+\
+*用于渲染语言学中的语法树/解析树*
 #import "@preview/syntree:0.2.0": syntree
 #syntree(
   nonterminal: (font: "Linux Biolinum"),
@@ -178,8 +236,9 @@ TeX Live|2015
   "[S [NP This] [VP [V is] [^NP a wug]]]"
 )
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
+\
+\
+\
 *使用 graphviz dot 语言生成图形的工具*
 #import "@preview/gviz:0.1.0": *
 
@@ -209,7 +268,43 @@ SVG:
 #raw(render(my-graph), block: true, lang: "svg")
 ]
 
-#v(3em)
-#line(length: 100%, stroke: aqua)
-做 slides，用 #link("https://github.com/typst/packages/tree/main/packages/preview/touying/0.3.1")[#text(fill: blue)[投影touying]]
+\
+\
+\
+*polylux: 使用 Typst 制作演示幻灯片*
+#import "@preview/polylux:0.3.1": *
+#import themes.simple: *
+#set text(font: "Inria Sans")
+#show: simple-theme.with(
+  footer: [Simple slides],
+)
+#title-slide[
+  = Keep it simple!
+  #v(2em)
 
+  Alpha #footnote[Uni Augsburg] #h(1em)
+  Bravo #footnote[Uni Bayreuth] #h(1em)
+  Charlie #footnote[Uni Chemnitz] #h(1em)
+
+  July 23
+]
+#slide[
+  == First slide
+
+  #lorem(20)
+]
+#focus-slide[
+  _Focus!_
+
+  This is very important.
+]
+#centered-slide[
+  = Let's start a new section!
+]
+#slide[
+  == Dynamic slide
+  Did you know that...
+
+  #pause
+  ...you can see the current section at the top of the slide?
+]
