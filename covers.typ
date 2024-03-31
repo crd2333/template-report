@@ -45,7 +45,7 @@
     #v(3.5em)
     #text(title, font: 字体.宋体, size: 字号.小一, weight: "bold")
     #v(1em)
-    #text(author, font: 字体.宋体, size: 字号.四号)
+    #text(author, font: 字体.宋体, size: 字号.三号)
     #v(0.5em)
     #date_format(date: date, lang: lang)
   ]

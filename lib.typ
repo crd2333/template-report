@@ -50,6 +50,8 @@
   show math.equation: i-figured.show-equation
   show: setup-emoji
   show: setup-lovelace // 注意这一行必须在 i-figure 后，否则会被覆盖而出 bug
+  show: shorthand // 导入 math shorthand
+  show: codly-init.with()
 
   set document(title: title, author: author)
   set page(
@@ -77,30 +79,39 @@
   set text(font: 字体.宋体, size: 字号.小四, lang: lang)
   set par(first-line-indent: 2em)
 
+  // 设置 bullet list 的 marker，相比默认更像 markdown，另外刻意调大了一点（适合老年人
+  set list(marker: ([●], [○], [■], [□], [►]))
+
   // 中文斜体显示为楷体
   show emph: text.with(font: 字体.楷体)
 
   // 设置标题
   show heading.where(level: 1): it => {
     set align(center)
-    set text(weight: "bold", font: 字体.宋体, size: 18pt)
+    set text(weight: "bold", font: 字体.黑体, size: 18pt)
     set block(spacing: 1em)
     it
   }
   show heading.where(level: 2): it => {
-    set text(weight: "bold", font: 字体.宋体, size: 17pt)
+    set text(weight: "bold", font: 字体.黑体, size: 17pt)
     it
   }
   show heading.where(level: 3): it => {
-    set text(weight: "bold", font: 字体.宋体, size: 16pt)
+    set text(weight: "bold", font: 字体.黑体, size: 16pt)
     it
   }
-
-  show heading: it => { // 标题后用假段落添加缩进
-    set block(above: 1.5em, below: 1em)
+  show heading.where(level: 4): it => {
+    set text(weight: "bold", font: 字体.黑体, size: 15pt)
     it
-  } + _empty_par()
-
+  }
+  show heading.where(level: 4): it => {
+    set text(weight: "bold", font: 字体.黑体, size: 14pt)
+    it
+  }
+  show heading: it => { // 标题后用假段落添加缩进
+    set block(above: 1em, below: 1em)
+    it
+  } + fake_par
   set heading(numbering: (..nums) => { // 设置标题编号
     nums.pos().map(str).join(".") + " "
   })
@@ -113,6 +124,32 @@
     radius: 2pt,
   )
 
+  // codly 初始化
+  codly(
+    languages: (
+      c: (name: "", icon: h(2pt)+c_svg, color: rgb("#A8B9CC")),
+      C: (name: "", icon: h(2pt)+c_svg, color: rgb("#A8B9CC")),
+      cpp: (name: "Cpp", icon: cpp_svg, color: rgb("#00599C")),
+      Cpp: (name: "Cpp", icon: cpp_svg, color: rgb("#00599C")),
+      py: (name: "Python", icon: python_svg, color: rgb(("#3D8FD1"))),
+      python: (name: "Python", icon: python_svg, color: rgb(("#3D8FD1"))),
+      rust: (name: "Rust", icon: rust_svg, color: rgb("#CE412B")),
+      java: (name: "Java", icon: java_svg, color: rgb("#5382A1")),
+      typ: (name: "Typst", icon: typst_svg, color: rgb("#FFD700")),
+      sql: (name: "SQL", icon: sql_svg, color: rgb("#F0A103")),
+      SQL: (name: "SQL", icon: sql_svg, color: rgb("#F0A103")),
+      verilog: (name: "Verilog", icon: verilog_svg, color: rgb("#FF6666")),
+      Verilog: (name: "Verilog", icon: verilog_svg, color: rgb("#FF6666")),
+    ),
+    zebra-color: luma(250),
+    fill: luma(250),
+    // stroke-width: 1pt,
+    // display-name: false,
+    // display-icon: false
+  )
+
+  // 代码中文字体
+  show raw: set text(font: (字体.meslo-mono, 字体.思源宋体))
   // 对 typst 语言的注释进行特殊处理
   show raw.where(lang: "typst"): it => {
     show regex("//[\s\S]*"): it => {
@@ -123,6 +160,7 @@
     }
     it
   }
+  set raw(syntaxes: "assets/Assembly.sublime-syntax") // 汇编代码的语法高亮
 
   // 行间公式、原始文本与文字之间的自动空格
   show raw.where(block: false): it => h(0.25em, weak: true) + it + h(0.25em, weak: true)

@@ -59,7 +59,7 @@ _斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体，一般用
 
 #hline()
 
-#indent 另外，通过 `#indent`（或`#tab`）能缩进内容，比如在图表之后，需要手动缩进。
+#indent 另外，通过 `#indent`（或`#tab`）能缩进内容，比如在图表之后，需要手动缩进。其实可以自动缩进，只是个人认为，图标后是否缩进还是由作者手动控制比较好。
 
 == 图表测试
 
@@ -95,13 +95,6 @@ $ x <= y $
 === 代码
 
 #code(
-  numbers-start: 1,
-  numbers-style: codelst-lno,
-  highlight-labels: true,
-  highlighted: (1, 2),
-  highlight-color: rgb(240, 238, 80),
-  gutter: 1em,
-  frame: code-frame,
   caption: "This is a code listing",
 )[
   ```c
@@ -116,7 +109,16 @@ $ x <= y $
 
 #indent 引用代码@lst:code
 
-注意，由于code是用codelst包嵌入figure来实现，而figure中的block如果想要分块，需要 ```typ #show figure.where(kind: raw): set block(breakable: true)``` 才能实现。然而，这条语句跟 i-figured 包冲突，因此读者需要自行到 i-figured 包的 show-figure 函数内添加 ```typ set block(breakable: true)```。
+注意，code使用codly实现，会自动捕捉所有成块原始文本，像下面这样，如果不想这样，需要手动指定 ```typ #disable-codly()```，后续又要使用使再 ```typ #codly()``` 加回来
+
+#disable-codly()
+```raw
+并没有调用code命令
+```
+#codly()
+```raw
+并没有调用code命令
+```
 
 === 表格
 
@@ -150,7 +152,7 @@ columns: (auto, auto),
   caption: "测试表格",
 ) <test2>
 
-#tab 由于习惯了 markdown 的表格，所以这里的表格语法多少有点奇怪，但是也有类 markdown 表格包的实现：
+#tab 由于习惯了 markdown 的表格，所以 typst 的表格语法多少有点奇怪，但是也有类 markdown 表格包的实现：
 #tblm(caption: "tablem实现的类markdown表格")[
   | *Name* | *Location* | *Height* | *Score* |
   | ------ | ---------- | -------- | ------- |
@@ -208,13 +210,21 @@ $a xarrow(sym: <->, "text above arrow") b$
 === syntree & treet
 
 语法树，像这样
+#let bx(col) = box(fill: col, width: 1em, height: 1em)
 
-#syntree(
-  nonterminal: (font: "Linux Biolinum"),
-  terminal: (fill: red),
-  child-spacing: 3em, // default 1em
-  layer-spacing: 2em, // default 2.3em
-  "[S [NP This] [VP [V is] [^NP a wug]]]"
+#grid(
+  columns:2,
+  gutter: 4em,
+  syntree(
+    nonterminal: (font: "Linux Biolinum"),
+    terminal: (fill: red),
+    child-spacing: 3em, // default 1em
+    layer-spacing: 2em, // default 2.3em
+    "[S [NP This] [VP [V is] [^NP a wug]]]"
+  ),
+  tree("colors",
+    tree("warm", bx(red), bx(orange)),
+    tree("cool", bx(blue), bx(teal)))
 )
 
 #tab 文件夹型的树，像这样
@@ -245,7 +255,7 @@ GitHub表情(github-named emojis): `#github.blue_car` #github.blue_car
 === boxes(admonitions & thms)
 
 #note()[我自己写的admonition块]
-#info(caption: "标题可以自定义", caption_size: 16pt, size: 9pt)[图标、字体、字号也可以传入修改]
+#info(caption: "标题与字号可以自定义", caption_size: 16pt, size: 9pt)[图标、字体、字号也可以传入修改]
 
 #tab 好康的定理块：
 
@@ -263,7 +273,7 @@ GitHub表情(github-named emojis): `#github.blue_car` #github.blue_car
 
 Link to previous theorem: @thm
 
-=== 伪代码
+=== 伪代码（算法）
 
 lovelace包，可以用来写伪代码，比如：
 

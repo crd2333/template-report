@@ -23,15 +23,16 @@
   radius: 4pt,         // radius of the block corners
   font: (:),           // font of caption and body
   caption_size: 13pt,  // size of the caption
-  size: 10.5pt,
+  size: 10.5pt,        // size of content
+  indent: true,        // whether indent is needed
   ..args
 ) = {
   set block(breakable: breakable)
   // caption, placed in the first block
   let title = if font != (:) {
-      text(font: font, size: caption_size, weight: "bold", baseline: -0.2em, ligatures: false)[#caption]
+      text(font: font, size: caption_size, weight: "bold", baseline: -0.4em, ligatures: false)[#caption]
     } else {
-      text(size: caption_size, weight: "bold", baseline: -0.2em, ligatures: false)[#caption]
+      text(size: caption_size, weight: "bold", baseline: -0.4em, ligatures: false)[#caption]
     }
   let caption = box(height: iconsize)[
     #if type(icon) == "symbol" {
@@ -76,11 +77,13 @@
       ),
     )[
       #pad(x: -inset, y: -10pt)[#cap_block] // caption block
+      #parbreak()
+      #if indent {h(2em)}
       #body
     ]
 
   block // negative padding to avoid extra space due to move
-  v(0.5em) // indent for the text below, can be delelted if not required
+  // v(0.5em) // indent for the text below, can be delelted if not required
 }
 
 #let note(body, caption: none, icon: "svg/note.svg", blockcolor: rgb(236, 243, 255), stroke: rgb(68, 138, 255), ..args) = {

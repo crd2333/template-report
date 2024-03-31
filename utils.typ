@@ -10,39 +10,28 @@
 // 导入第三方包中的工具
 // 可变长箭头、树、图文包裹、图标、真值表
 #import "@preview/xarrow:0.3.0": xarrow, xarrowSquiggly, xarrowTwoHead
-#import "@preview/syntree:0.2.0": syntree
+#import "@preview/syntree:0.2.0": syntree, tree
 #import "@preview/treet:0.1.0": *
 #import "@preview/wrap-it:0.1.0": wrap-content, wrap-top-bottom
 #import "@preview/fontawesome:0.1.0": *
 #import "@preview/quick-maths:0.1.0": shorthands
 
-#let _empty_par() = {
-  v(-1em)
-  box()
-}
-
-#let _empty_par_larger() = {
-  _empty_par()
-  _empty_par()
-  _empty_par()
-  _empty_par()
-}
-
-#let _empty_par_huge() = {
-  _empty_par_larger()
-  _empty_par_larger()
-  _empty_par_larger()
-  _empty_par_larger()
-}
+// 假段落
+#let fake_par = style(styles => {
+  let b = par[#box()]
+  let t = measure(b + b, styles)
+  b
+  v(-t.height * 0.9)
+})
 
 // 中文缩进
 #let indent = h(2em)
 #let tab = indent // alias
-
 #let noindent(body) = {
   set par(first-line-indent: 0em)
   body
 }
+#let notab = noindent // alias
 
 // 封装 tree-list，使其无缩进、视为整体且支持根节点；选用这个字体使线段连续
 #let tree-list = (root: "", breakable: false, body) => {
@@ -119,25 +108,6 @@
   line(length: 100%)
 }
 
-// 汉字伪粗体，from https://discord.com/channels/1054443721975922748/1054443722592497796/1175967383630921848
-#let skew(angle, vscale: 1, body) = {
-  let (a, b, c, d) = (1, vscale * calc.tan(angle), 0, vscale)
-  let E = (a + d) / 2
-  let F = (a - d) / 2
-  let G = (b + c) / 2
-  let H = (c - b) / 2
-  let Q = calc.sqrt(E * E + H * H)
-  let R = calc.sqrt(F * F + G * G)
-  let sx = Q + R
-  let sy = Q - R
-  let a1 = calc.atan2(F, G)
-  let a2 = calc.atan2(E, H)
-  let theta = (a2 - a1) / 2
-  let phi = (a2 + a1) / 2
-
-  set rotate(origin: bottom + center)
-  set scale(origin: bottom + center)
-
-  rotate(phi, scale(x: sx * 100%, y: sy * 100%, rotate(theta, body)))
-}
-#let fake-italic(body) = box(skew(-12deg, body))
+// 快捷文字着色，实现了红色蓝色，黑色则为粗体，两个 * 即可
+#let redt(body) = text(fill: colors.red, body)
+#let bluet(body) = text(fill: colors.blue, body)

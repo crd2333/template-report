@@ -17,7 +17,7 @@
     let number = ""
     let result = none
     if numbered {
-      // Managing counters, using code in 
+      // Managing counters, using code in
       // https://github.com/sahasatvik/typst-theorems/blob/main/theorems.typ
       result = locate(
         loc => {
@@ -88,10 +88,10 @@
         )
       }
     )
-    
+
 
     return figure(
-      result + 
+      result +
       rect(
         width: 100%,
         fill: color.lighten(90%),
@@ -101,7 +101,7 @@
         #set align(left)
         #place(alignment.left + alignment.top, dx: -5pt, dy: -5pt, title-background)
         #title-content
-        #emph(body)
+        #body
       ],
       caption: none,
       outlined: false,
