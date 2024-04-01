@@ -5,7 +5,7 @@
 #import "math.typ": *
 
 // 导入第三方包
-#import "@preview/lovelace:0.2.0": *
+#import "@preview/lovelace:0.2.0": setup-lovelace
 #import "@preview/i-figured:0.2.4"
 
 #let project(
@@ -166,7 +166,7 @@
   show raw.where(block: false): it => h(0.25em, weak: true) + it + h(0.25em, weak: true)
   show math.equation.where(block: false): it => h(0.25em, weak: true) + it + h(0.25em, weak: true)
 
-   // 引用与链接字体蓝色显示
+  // 引用与链接字体蓝色显示
   show ref: it => {
     text(colors.blue)[#it]
   }

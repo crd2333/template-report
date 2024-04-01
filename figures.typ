@@ -1,5 +1,3 @@
-#import "@preview/t4t:0.3.2": is
-#import "@preview/tablex:0.0.6": tablex, hlinex, vlinex, colspanx, rowspanx, cellx
 #import "@preview/tablem:0.1.0": tablem
 #import "@preview/lovelace:0.2.0": algorithm, pseudocode-raw
 #import "@preview/truthfy:0.3.0": truth-table, truth-table-empty
@@ -12,43 +10,31 @@
   caption: caption,
 )
 
-// 使用 figure2 函数替代原生 figure 函数以支持将 tablex 作为表格来识别。
-#let figure2(body, kind: auto, ..args) = figure(
-  kind:
-    if (kind != auto) {
-      kind
-    } else if (is.elem(image, body) or is.elem(raw, body)) {
-      auto
-    } else { // 让其默认为 table
-      table
-    },
-  body,
-  ..args,
-)
-
-// 普通表，使用 tablex 实现
-#let tbl(caption: "", alignment: center + horizon, ..args) = figure2(
-  tablex(
+// 普通表，包含居中
+#let tbl(caption: "", alignment: center+horizon, ..args) = {
+  figure(
+    table(
+      align: alignment,
+      ..args,
+    ),
+    caption: caption,
+  )
+}
+// 三线表，包含居中
+#let tlt(caption: "", alignment: center+horizon, ..args) = figure(
+  table(
+    stroke: none,
     align: alignment,
+    table.hline(y: 0),
+    table.hline(y: 1),
     ..args,
-  ),
-  caption: caption,
-)
-// 三线表，包含居中，使用 tablex 实现
-#let tlt(caption: "", alignment: center + horizon, ..args) = figure2(
-  tablex(
-    auto-lines: false,
-    align: alignment,
-    hlinex(y: 0),
-    hlinex(y: 1),
-    ..args,
-    hlinex(),
+    table.hline(),
   ),
   caption: caption,
 )
 
 // 类 markdown 表格，使用 tablem 实现
-#let tblm(caption: "", ..args) = figure2(
+#let tblm(caption: "", ..args) = figure(
   tablem(
     ..args,
   ),
@@ -56,23 +42,21 @@
 )
 
 // 真值表，使用 truthfy 实现
-#let truth-tbl(caption: "", ..args) = figure2(
+#let truth-tbl(caption: "", ..args) = figure(
   caption: caption,
   truth-table(..args)
 )
-#let truth-tbl-empty(caption: "", ..args) = figure2(
+#let truth-tbl-empty(caption: "", ..args) = figure(
   caption: caption,
   truth-table-empty(..args)
 )
 
 // 算法框，使用 lovelace 实现
 #let algo(caption: "", body) = {
-  // 去除当以 "[]" 形式传参时 body "[]"，方法比较笨，轻喷
-  if "children" in body.fields() {
+  // 去除当以 "[]" 形式传参时 body 中的 "[]"，方法比较笨，轻喷
+  if "text" not in body.fields() {
     body = body.children
-    body.remove(0)
-    body.remove(body.len() - 1)
-    body = body.at(0)
+    body = body.at(1)
   }
   algorithm(
     caption: caption,

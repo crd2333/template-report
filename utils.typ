@@ -1,20 +1,19 @@
 #import "fonts.typ":*
 
-// 导入自定义包
+// 导入本地包
 // todo、emoji、两种 box
 #import "packages/todo/0.1.0/lib.typ": todo
 #import "packages/svg-emoji/0.1.0/lib.typ": setup-emoji, github
 #import "packages/admonition/0.1.0/lib.typ": *
 #import "packages/thms/0.1.0/thm-envs.typ": *
 
-// 导入第三方包中的工具
+// 导入 preview 包
 // 可变长箭头、树、图文包裹、图标、真值表
 #import "@preview/xarrow:0.3.0": xarrow, xarrowSquiggly, xarrowTwoHead
 #import "@preview/syntree:0.2.0": syntree, tree
-#import "@preview/treet:0.1.0": *
+#import "@preview/treet:0.1.0": tree-list
 #import "@preview/wrap-it:0.1.0": wrap-content, wrap-top-bottom
 #import "@preview/fontawesome:0.1.0": *
-#import "@preview/quick-maths:0.1.0": shorthands
 
 // 假段落
 #let fake_par = style(styles => {
@@ -26,17 +25,29 @@
 
 // 中文缩进
 #let indent = h(2em)
-#let tab = indent // alias
 #let noindent(body) = {
   set par(first-line-indent: 0em)
   body
 }
+#let tab = indent // alias
 #let notab = noindent // alias
 
 // 封装 tree-list，使其无缩进、视为整体且支持根节点；选用这个字体使线段连续
 #let tree-list = (root: "", breakable: false, body) => {
   let root = if root != "" {[#root\ ]}
-  block(breakable: breakable)[#noindent()[#root#tree-list(marker-font: "MesloLGS NF", body)]]
+  block(breakable: breakable)[
+    #noindent()[
+      #root
+      #tree-list(
+        marker-font: "MesloLGS NF",
+        marker: [├──#h(0.3em)], // modify as you like
+        indent: [│#h(1.5em)],
+        last-marker: [└──#h(0.3em)],
+        empty-indent: h(2.2em),
+        body
+      )
+    ]
+  ]
 }
 
 #let date_format(
@@ -109,5 +120,11 @@
 }
 
 // 快捷文字着色，实现了红色蓝色，黑色则为粗体，两个 * 即可
-#let redt(body) = text(fill: colors.red, body)
-#let bluet(body) = text(fill: colors.blue, body)
+#let redt(body) = text(fill: colors.red, body) // red-text
+#let bluet(body) = text(fill: colors.blue, body) // blue-text
+
+// 自动数学环境，在 block 中以 `show: automath` 使用，或对表格等使用
+#let automath = it => {
+  show regex("\d+(\.\d+)*"): it => $it$
+  it
+}

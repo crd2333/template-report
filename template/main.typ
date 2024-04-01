@@ -59,7 +59,7 @@ _斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体，一般用
 
 #hline()
 
-#indent 另外，通过 `#indent`（或`#tab`）能缩进内容，比如在图表之后，需要手动缩进。其实可以自动缩进，只是个人认为，图标后是否缩进还是由作者手动控制比较好。
+#indent 另外，通过 `#indent`（或`#tab`）能缩进内容，比如在图表之后，需要手动缩进。其实可以自动缩进，只是个人认为，图表后是否缩进还是由作者手动控制比较好。
 
 == 图表测试
 
@@ -82,11 +82,13 @@ $ F_n = floor(1 / sqrt(5) phi.alt^n) $ <->
 
 为了更加简化符号输入，有这么一个包 #link("https://github.com/typst/packages/tree/main/packages/preview/quick-maths/0.1.0")[quick-maths]，定义一些快捷方式，比如：
 
+```typ
 #show: shorthands.with(
   ($+-$, $plus.minus$),
   ($|-$, math.tack),
   ($<=$, math.arrow.l.double) // Replaces '≤'
 )
+```
 
 $ x^2 = 9 quad <==> quad x = +-3 $
 $ A or B |- A $
@@ -103,7 +105,6 @@ $ x <= y $
     printf("Hello World!");
     return 0;
   }
-
   ```
 ] <code>
 
@@ -121,12 +122,34 @@ $ x <= y $
 ```
 
 === 表格
+自动数学环境包裹表格内容：```typ #show table.cell: automath```
+#show table.cell: automath
+#tbl(
+  caption: "Multiplier",
+  fill: (x, y) =>
+    if y == 0 {
+      aqua.lighten(40%)
+    },
+  columns: 4,
+  [Iteration],[Step],[Multiplicand],[Product / Multiplicator],
+  [0],[initial values],[01100010],[00000000 00010010],
+  table.cell(rowspan: 2)[1],[0 $=>$ no op],[01100010],[00000000 00010010],
+  [shift right],[01100010],[00000000 00001001],
+  table.cell(rowspan: 2)[2],[1 $=>$ prod += Mcand],[01100010],[01100010 00001001],
+  [shift right],[01100010],[00110001 00000100],
+  table.cell(rowspan: 2)[3],[0 $=>$ no op],[01100010],[00110001 00000100],
+  [shift right],[01100010],[00011000 10000010],
+  table.cell(colspan: 4)[......]
+)
 
 #align(center, (stack(dir: ltr)[
   #tbl(
+    fill: (x, y) => if y == 0 {
+        aqua.lighten(40%)
+      },
     columns: 4,
     [t], [1], [2], [3],
-    [y], [0.3s], [0.4s], [0.8s],
+    [y], [0.3 2.2.2.2s], [0.4s], [0.8s],
     caption: [常规表],
   ) <timing>
 ][
@@ -135,14 +158,14 @@ $ x <= y $
   #tlt(
     columns: 4,
     [t], [1], [2], [3],
-    [y], [0.3s], [0.4s], [0.8s],
+    [y], [123.123s], [0.4s], [0.8s],
     caption: [三线表],
   ) <timing-tlt>
 ]))
 
 引用@tbl:timing，引用@tbl:timing-tlt。
 
-单个表格无stack，测试引用@tbl:test2
+三线表，引用@tbl:test2。
 
 #tlt(
 columns: (auto, auto),
@@ -152,7 +175,7 @@ columns: (auto, auto),
   caption: "测试表格",
 ) <test2>
 
-#tab 由于习惯了 markdown 的表格，所以 typst 的表格语法多少有点奇怪，但是也有类 markdown 表格包的实现：
+#tab 由于习惯了 markdown 的表格，所以 typst 的表格语法可能不太习惯，但是也有类 markdown 表格包的实现：
 #tblm(caption: "tablem实现的类markdown表格")[
   | *Name* | *Location* | *Height* | *Score* |
   | ------ | ---------- | -------- | ------- |
@@ -166,18 +189,21 @@ columns: (auto, auto),
 
 图片测试引用@fig:test2，可以看到现在的编号是 2 开头。
 
-== 无序列表与有序列表
-
+== 列表
+Bubble list 语法（更改了部分图标）：
 - 无序列表项一
 - 无序列表项二
   - 无序子列表项一
   - 无序子列表项二
 
-
 + 有序列表项一
 + 有序列表项二
   + 有序子列表项一
   + 有序子列表项二
+
+#tab Term list 语法：
+/ a: Something
+/ b: Something
 
 == 添加脚注
 
@@ -230,17 +256,15 @@ $a xarrow(sym: <->, "text above arrow") b$
 #tab 文件夹型的树，像这样
 
 #tree-list(root: "root")[
-  - 1
-    - 1.1
-    - 1.2
-      - 1.2.1
-  - 2
-  - 3
-    - 3.1
-      - 3.1.1
-
+- 1
+  - 1.1
+  - 1.2
+    - 1.2.1
+- 2
+- 3
+  - 3.1
+    - 3.1.1
 ]
-
 
 === emoji
 
@@ -250,7 +274,7 @@ $a xarrow(sym: <->, "text above arrow") b$
 
 GitHub表情(github-named emojis): `#github.blue_car` #github.blue_car
 
-由 #link("https://fontawesome.com/download")[Font awesome] 提供的图标，需要下载字体：#fa-github()，具体有哪些可查 #link("https://fontawesome.com/search?o=r&m=free")[Font awesome gallery]。
+由 #link("https://fontawesome.com/download")[Font awesome] 提供的图标（需要下载字体）：#fa-github()，具体有哪些可查 #link("https://fontawesome.com/search?o=r&m=free")[Font awesome gallery]。
 
 === boxes(admonitions & thms)
 
@@ -275,7 +299,7 @@ Link to previous theorem: @thm
 
 === 伪代码（算法）
 
-lovelace包，可以用来写伪代码，比如：
+lovelace包，可以用来写伪代码，body 最好用 typ，比如：
 
 #algo(
   caption: [caption for algorithm],
@@ -310,9 +334,9 @@ lovelace包，可以用来写伪代码，比如：
 #let body = lorem(40)
 
 #wrap-content(
-  fig,
   align: bottom + right,
-  column-gutter: 2em
+  column-gutter: 2em,
+  fig
 )[
   #indent #body
 ]
