@@ -1,8 +1,7 @@
 [package]
 name = "thms"
 version = "0.1.0"
-entrypoint = "thm-envs.typ"
-authors = ["Fr4nk1inCs"]
+entrypoint = "lib.typ"
+authors = ["crd233"]
 license = "MIT"
-description = "Typreset is a collection of typst presets for my daily writing. And thms is part of it."
-repository = "https://github.com/Fr4nk1inCs/typreset/tree/master"
+description = "A theorem box designed using showybox."

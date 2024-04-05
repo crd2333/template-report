@@ -122,7 +122,7 @@ $ x <= y $
 ```
 
 === 表格
-自动数学环境包裹表格内容：```typ #show table.cell: automath```
+表格内容自动数学环境：```typ #show table.cell: automath```
 #show table.cell: automath
 #tbl(
   caption: "Multiplier",
@@ -149,7 +149,7 @@ $ x <= y $
       },
     columns: 4,
     [t], [1], [2], [3],
-    [y], [0.3 2.2.2.2s], [0.4s], [0.8s],
+    [y], [0.3s], [0.4s], [0.8s],
     caption: [常规表],
   ) <timing>
 ][

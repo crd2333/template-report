@@ -4,8 +4,8 @@
 // todo、emoji、两种 box
 #import "packages/todo/0.1.0/lib.typ": todo
 #import "packages/svg-emoji/0.1.0/lib.typ": setup-emoji, github
-#import "packages/admonition/0.1.0/lib.typ": *
-#import "packages/thms/0.1.0/thm-envs.typ": *
+#import "packages/admonition/0.3.0/lib.typ": *
+#import "packages/thms/0.1.0/lib.typ": *
 
 // 导入 preview 包
 // 可变长箭头、树、图文包裹、图标、真值表
@@ -125,6 +125,6 @@
 
 // 自动数学环境，在 block 中以 `show: automath` 使用，或对表格等使用
 #let automath = it => {
-  show regex("\d+(\.\d+)*"): it => $it$
+  show regex("\d+(.\d+)*"): it => $it$
   it
 }

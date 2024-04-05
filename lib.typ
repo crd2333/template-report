@@ -44,9 +44,10 @@
     id: id,
   ) + (lang: lang, cover_style: cover_style, show_name: show_name)
 
-  // 导入第三方包中的 show 规则
-  show figure: i-figured.show-figure
+  // 导入 show 规则
   show heading: i-figured.reset-counters
+  show heading: reset-counters-box
+  show figure: i-figured.show-figure
   show math.equation: i-figured.show-equation
   show: setup-emoji
   show: setup-lovelace // 注意这一行必须在 i-figure 后，否则会被覆盖而出 bug

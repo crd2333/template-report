@@ -1,57 +1,32 @@
-#import "thm-envs.typ"
-#let (theorem, definition, lemma, corollary, proof) = thm-envs.presets()
-#let thm-base = thm-envs.thm-base
+#import "lib.typ": *
+#import "@preview/i-figured:0.2.4"
 
 #set heading(numbering: "1.")
+#show heading: reset-counters-box
+#show heading: i-figured.reset-counters
+#show figure: i-figured.show-figure
 
-= Basic Test
+#theorem(footer: [qwe])[#lorem(20)] <thm2>
 
-#theorem[
-  #lorem(20)
-]
+= qewe
+#theorem[#lorem(20)]
 
-#theorem[
-  #lorem(20)
-]
+= fsdfd
 
-#definition[
-  #lorem(20)
-]
+#theorem[#lorem(20)]
+#definition[#lorem(20)]
 
-#lemma[
-  #lorem(20)
-]
+== fsdfd
+#theorem[#lorem(20)]
 
-#corollary[
-  #lorem(20)
-]
+#corollary[#lorem(20)]
+#corollary([werewsdf])[#lorem(20)]
 
-#proof[
-  #lorem(20)
-]
+#lemma[#lorem(20)] <thm1>
 
-= Heading Counter Test
+#proof[#lorem(20)]
 
-#theorem[
-  #lorem(20)
-]
+@thm1
 
-= Label & Link Test
+@thm2
 
-#theorem[
-  #lorem(20)
-] <thm>
-
-Link to previous theorem: @thm
-
-= Self-Defined Theorem Environments
-
-```typ
-#let recall = thm-base(type: "Recall", color: gray)
-```
-
-#let recall = thm-base(type: "Recall", color: gray)
-
-#recall[
-  #lorem(20)
-]
