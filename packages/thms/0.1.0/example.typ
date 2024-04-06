@@ -1,32 +1,26 @@
 #import "lib.typ": *
-#import "@preview/i-figured:0.2.4"
 
 #set heading(numbering: "1.")
-#show heading: reset-counters-box
-#show heading: i-figured.reset-counters
-#show figure: i-figured.show-figure
+#show: thmrules
 
-#theorem(footer: [qwe])[#lorem(20)] <thm2>
+= First level heading
+#theorem(footer: [The showybox allowes you add footer for boxes, useful when giving some explanation.])[#lorem(20)] <thm1>
 
-= qewe
-#theorem[#lorem(20)]
+= Another first level heading
 
-= fsdfd
+#theorem(title: "This is a title", lorem(20)) <thm2>
 
-#theorem[#lorem(20)]
-#definition[#lorem(20)]
+== Second level heading
+#definition[The counter will be reset after the first level of heading changes (counting within one chapter).]
 
-== fsdfd
-#theorem[#lorem(20)]
+#theorem(title: [#text(fill: green, "This is another title")])[Now the counter increases by 1 for type `Theorem`.]
 
-#corollary[#lorem(20)]
-#corollary([werewsdf])[#lorem(20)]
+#corollary([One body.], footer: [As well as footer!])[Another body!]
 
-#lemma[#lorem(20)] <thm1>
+#lemma[#lorem(20)]
 
-#proof[#lorem(20)]
+#proof[By default the `Proof` will not count itself.\ And the `Proof` box will have a square at the right bottom corner.]
 
-@thm1
+@thm1 (Use the label name to refer)
 
 @thm2
-

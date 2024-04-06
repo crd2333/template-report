@@ -1,28 +1,58 @@
+/*
+Theorems boxes implemented by showybox, providing a bueatiful way to display theorems, definitions, lemmas, corollaries, and proofs.
+The boxes will be counted like x.y, where x is the first level heading number and y is the box number of the type.
+
+Author: crd233
+*/
+
 #import "@preview/showybox:2.0.1": showybox
 
-#let reset-counters-box(it, level: 1, extra-kinds: (), return-orig-heading: true) = {
-  if it.level <= level {
-    for kind in ("Theorem", "Definition", "Lemma", "Corollary", "Proof") {
-      counter(kind).update(0)
+#let thmrules(doc) = {
+  let types = ("Theorem", "Definition", "Lemma", "Corollary", "Proof")
+  // update all counters when first level heading is updated
+  show heading: it => {
+    if it.level <= 1 {
+      for kind in types {
+        counter(kind).update(1)
+      }
     }
-  }
-  if return-orig-heading {
     it
   }
+  // use the label name to refer
+  show ref: it => {
+    if (it.element != none and it.element.has("kind") and it.element.kind in types) {
+      return link(it.target, [#str(it.element.at("label"))])
+    } else {it}
+  }
+  doc
 }
 
 #let thm-base(
-  type: "Theorem",
+  type: "thm-base",
   color: blue,
+  title: "",
+  count: true,
+  body,
   ..args) = {
   let heading_num = context counter(heading).get().at(0)
   let thm_counter = counter(type)
-  let thm_num = {
-    thm_counter.step()
-    heading_num + "." + thm_counter.display()
+  if title != "" and count {
+    title = type + " " + heading_num + "." + thm_counter.display() + ": " + title
+  } else if count {
+    title = type + " " + heading_num + "." + thm_counter.display()
+  } else {
+    title = type
   }
+
   return figure(
     showybox(
+      title-style: (
+        weight: "bold",
+        boxed-style: (
+          anchor: (x: left, y: horizon),
+          radius: (top-left: 10pt, bottom-right: 10pt, rest: 0pt),
+        )
+      ),
       frame: (
         title-color: color.lighten(10%),
         body-color: color.lighten(90%),
@@ -30,19 +60,23 @@
         border-color: color,
         radius: (top-left: 10pt, bottom-right: 10pt, rest: 0pt)
       ),
-      title: type+" "+thm_num,
+      sep: (
+        dash: "dashed",
+      ),
+      title: title,
+      [#thm_counter.step() #body],
       ..args
     ),
     supplement: type,
-    kind: type,
+    kind: type
   )
 }
 
-#let theorem(body, ..args) = thm-base(type: "Theorem", color: blue, body, ..args)
-#let definition(body, ..args) = thm-base(type: "Definition", color: orange, body, ..args)
-#let lemma(body, ..args) = thm-base(type: "Lemma", color: purple, body, ..args)
-#let corollary(body, ..args) = thm-base(type: "Corollary", color: green, body, ..args)
+#let theorem(..args) = thm-base(type: "Theorem", color: blue, ..args)
+#let definition(..args) = thm-base(type: "Definition", color: orange, ..args)
+#let lemma(..args) = thm-base(type: "Lemma", color: purple, ..args)
+#let corollary(..args) = thm-base(type: "Corollary", color: green, ..args)
 #let proof(body, ..args) = {
   body = body + h(1fr) + box(scale(160%, origin: bottom + right, sym.square.stroked))
-  return thm-base(type: "Proof", color: gray.darken(30%), body, ..args)
+  return thm-base(type: "Proof", color: gray.darken(30%), count: false, body, ..args)
 }

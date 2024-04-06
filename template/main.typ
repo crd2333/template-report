@@ -279,23 +279,28 @@ GitHub表情(github-named emojis): `#github.blue_car` #github.blue_car
 === boxes(admonitions & thms)
 
 #note()[我自己写的admonition块]
-#info(caption: "标题与字号可以自定义", caption_size: 16pt, size: 9pt)[图标、字体、字号也可以传入修改]
+#info(caption: "标题与字号可以自定义", caption_size: 16pt, size: 9pt)[图标、内容字号也可以传入修改]
 
 #tab 好康的定理块：
 
-#theorem[#lorem(20)]
+#theorem(title: "This is a title", lorem(20)) <thm2>
 
-#definition[#lorem(20)]
+#theorem(footer: [The showybox allowes you add footer for boxes, useful when giving some explanation.])[#lorem(20)] <thm1>
+
+#definition[The counter will be reset after the first level of heading changes (counting within one chapter).]
+
+#theorem(title: [#text(fill: green, "This is another title")])[Now the counter increases by 1 for type `Theorem`.]
+
+#corollary([One body.], footer: [As well as footer!])[Another body!]
 
 #lemma[#lorem(20)]
 
-#corollary[#lorem(20)]
+#proof[By default the `Proof` will not count itself.\ And the `Proof` box will have a square at the right bottom corner.]
 
-#proof[#lorem(20)]
-
-#theorem[#lorem(20)] <thm>
-
-Link to previous theorem: @thm
+#noindent[
+@thm1 (Use the label name to refer)\
+@thm2
+]
 
 === 伪代码（算法）
 

@@ -46,11 +46,11 @@
 
   // 导入 show 规则
   show heading: i-figured.reset-counters
-  show heading: reset-counters-box
   show figure: i-figured.show-figure
   show math.equation: i-figured.show-equation
   show: setup-emoji
   show: setup-lovelace // 注意这一行必须在 i-figure 后，否则会被覆盖而出 bug
+  show: thmrules  // 导入 theorem 环境
   show: shorthand // 导入 math shorthand
   show: codly-init.with()
 
