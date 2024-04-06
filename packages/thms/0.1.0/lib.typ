@@ -1,5 +1,5 @@
 /*
-Theorems boxes implemented by showybox, providing a bueatiful way to display theorems, definitions, lemmas, corollaries, and proofs.
+Theorems boxes implemented by showybox, providing a beautiful way to display theorems, definitions, lemmas, corollaries, and proofs.
 The boxes will be counted like x.y, where x is the first level heading number and y is the box number of the type.
 
 Author: crd233
