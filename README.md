@@ -7,7 +7,7 @@
 ## 声明
 - 本模板是在 [浙江工业大学实验报告模板](https://github.com/zjutjh/zjut-report-typst) 和 [南京大学学位论文模板](https://github.com/nju-lug/nju-thesis-typst) 的基础上修改而来的。
 - 使用了自己编写的基于 showybox 的 [admonitions](https://github.com/crd2333/typst-admonition)、[theorems boxes](https://github.com/crd2333/typst-theorem-box)。
-- 并且使用到了 [typst-svg-emoji](https://github.com/polazarus/typst-svg-emoji)、[typst-todo](https://github.com/jeffa5/typst-todo)这两个不收录在官方 preview 的包。
+- 并且使用到了 [typst-svg-emoji](https://github.com/polazarus/typst-svg-emoji) 这个不收录在官方 preview 的包。
 
 ## 特点(feature)
 - 根据个人使用习惯，对封面页设置了"report"和"normal"类型，并支持匿名实验报告；
@@ -33,3 +33,4 @@
 11. 2024.3.10：typst 0.11.0 发布，根据新版的 template 要求重新组织结构
 12. 2024.4.1：调整表格为 0.11.0 的 built-in 表格及一些细节修改
 13. 2024.4.5：修改 theorem boxes，使用 showybox 实现
+14. 2024.4.14：细节调整与添加 cheq 包

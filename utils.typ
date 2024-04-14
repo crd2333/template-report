@@ -1,8 +1,7 @@
 #import "fonts.typ":*
 
 // 导入本地包
-// todo、emoji、两种 box
-#import "packages/todo/0.1.0/lib.typ": todo
+// emoji、两种 box
 #import "packages/svg-emoji/0.1.0/lib.typ": setup-emoji, github
 #import "packages/admonition/0.3.0/lib.typ": *
 #import "packages/thms/0.1.0/lib.typ": *
@@ -14,6 +13,7 @@
 #import "@preview/treet:0.1.0": tree-list
 #import "@preview/wrap-it:0.1.0": wrap-content, wrap-top-bottom
 #import "@preview/fontawesome:0.1.0": *
+#import "@preview/cheq:0.1.0": checklist
 
 // 假段落
 #let fake_par = style(styles => {

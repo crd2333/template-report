@@ -4,9 +4,8 @@
 #import "@preview/codly:0.2.0": *
 
 // 插入图片
-// image 函数必须在外部调用后传入图片，否则相对位置会基于模板
-#let fig(caption: "", image) = figure(
-  image,
+#let fig(caption: "", ..args) = figure(
+  image(..args),
   caption: caption,
 )
 

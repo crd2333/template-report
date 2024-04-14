@@ -40,6 +40,8 @@ Author: crd233
     title = type + " " + heading_num + "." + thm_counter.display() + ": " + title
   } else if count {
     title = type + " " + heading_num + "." + thm_counter.display()
+  } else if title != "" {
+    title = type + ": " + title
   } else {
     title = type
   }

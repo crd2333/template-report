@@ -67,7 +67,7 @@ _斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体，一般用
 
 === 图片
 
-#fig(caption: "测试图片, 浙江大学", image("../assets/校名.jpg")) <test>
+#fig(caption: "测试图片, 浙江大学", "../assets/校名.jpg") <test>
 
 图片测试引用 @fig:test
 
@@ -185,7 +185,7 @@ columns: (auto, auto),
 
 = 第二个大标题 <caption_2>
 
-#fig(image("../assets/校名.jpg"), caption: "测试图片, 浙江大学") <test2>
+#fig("../assets/校名.jpg", caption: "测试图片, 浙江大学", width: 50%) <test2>
 
 图片测试引用@fig:test2，可以看到现在的编号是 2 开头。
 
@@ -225,13 +225,10 @@ $a xarrow("text above arrow") b$
 
 $a xarrow(sym: <->, "text above arrow") b$
 
-=== todo
+=== todo(checklist)
 
-#noindent()[
-#todo()[加入更多layouts，比如前言、附录]
-
-#todo(fill:blue)[重构代码，使得可以根据语言切换文档类型]
-]
+- [ ] 加入更多layouts，比如前言、附录
+- [x] 重构代码，使得可以根据语言切换文档类型
 
 === syntree & treet
 

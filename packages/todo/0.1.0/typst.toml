@@ -1,8 +1,0 @@
-[package]
-name = "todo"
-version = "0.1.0"
-entrypoint = "lib.typ"
-authors = ["jeffa5"]
-license = "GPL-3.0-only"
-description = "This demonstrates some useful commands for adding todo notes to typst documents."
-repository = "https://github.com/jeffa5/typst-todo"

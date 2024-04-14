@@ -50,6 +50,7 @@
   show math.equation: i-figured.show-equation
   show: setup-emoji
   show: setup-lovelace // 注意这一行必须在 i-figure 后，否则会被覆盖而出 bug
+  show: checklist.with(fill: luma(95%), stroke: blue, radius: .2em)
   show: thmrules  // 导入 theorem 环境
   show: shorthand // 导入 math shorthand
   show: codly-init.with()
