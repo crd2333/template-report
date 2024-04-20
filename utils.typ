@@ -67,30 +67,16 @@
 
 // 目录
 #let toc(
-  lang: "en"
+  depth: 4,
+  toc_break: true
 ) = {
-  if lang == "en" {
-    align(center)[
-      #text(font: (字体.ntl, 字体.思源黑体), size: 字号.小二, "Catalog")
-    ]
-  } else if lang == "zh" {
-    align(center)[
-      #text(font: (字体.ntl, 字体.思源黑体), size: 字号.小二, "目录")
-    ]
-  }
-
-  parbreak()
-  set text(font: (字体.ntl, 字体.思源黑体), size: 字号.小四)
   set par(first-line-indent: 0pt)
-  show outline: it => {
-    set text(font: (字体.ntl, 字体.思源黑体), size: 字号.小四)
-    it
-    parbreak()
-  }
+  set text(font: (字体.ntl, 字体.思源黑体), size: 字号.小四)
   outline(
-    title: none,
     indent: true,
+    depth: depth
   )
+  if toc_break {pagebreak()}
 }
 
 #let colors = (

@@ -26,10 +26,12 @@
   show_name: true,
   header: true,
   footer: true,
+  toc_break: true,
+  toc_depth: 4,
   body
 ) = {
   // 信息处理和打包
-  if type(author) != "string" {author = author.join(", ")} // 多作者（array）时，分隔为字符串
+  if type(author) == "array" {author = author.join(", ")} // 多作者（array）时，分隔为字符串
   let infos = (
     title: title,
     title_2: title_2,
@@ -61,17 +63,18 @@
     numbering: "1",
     header:
       if header {
-        locate(
-        loc => if (counter(page).at(loc).first()==1) {none}
-        else {align(right, [*#title*])}
-        )
+        locate(loc => {
+          if (counter(page).at(loc).first() <= 2) {none}
+          else {align(right, text(size: 10pt, weight: "bold", title))}
+        })
       } else {none},
     footer:
       if footer {
         locate(loc => {
-          let page_number = counter(page).at(loc).first()
-          let total_pages = counter(page).final(loc).last()
-          align(center)[Page #page_number of #total_pages]
+          set align(center)
+          set text(10pt)
+          if (counter(page).at(loc).first() <= 2) {none}
+          else {"Page " + counter(page).display("1 of 1", both: true)}
         })
       } else {none},
     margin: (x: 2cm, y: 1.5cm),
@@ -89,27 +92,13 @@
 
   // 设置标题
   show heading.where(level: 1): it => {
-    set align(center)
-    set text(weight: "bold", font: 字体.黑体, size: 18pt)
     set block(spacing: 1em)
-    it
+    align(center, text(weight: "bold", font: 字体.黑体, size: 18pt, it))
   }
-  show heading.where(level: 2): it => {
-    set text(weight: "bold", font: 字体.黑体, size: 17pt)
-    it
-  }
-  show heading.where(level: 3): it => {
-    set text(weight: "bold", font: 字体.黑体, size: 16pt)
-    it
-  }
-  show heading.where(level: 4): it => {
-    set text(weight: "bold", font: 字体.黑体, size: 15pt)
-    it
-  }
-  show heading.where(level: 4): it => {
-    set text(weight: "bold", font: 字体.黑体, size: 14pt)
-    it
-  }
+  show heading.where(level: 2): it => {text(weight: "bold", font: 字体.黑体, size: 17pt, it)}
+  show heading.where(level: 3): it => {text(weight: "bold", font: 字体.黑体, size: 16pt, it)}
+  show heading.where(level: 4): it => {text(weight: "bold", font: 字体.黑体, size: 15pt, it)}
+  show heading.where(level: 5): it => {text(weight: "bold", font: 字体.黑体, size: 14pt, it)}
   show heading: it => { // 标题后用假段落添加缩进
     set block(above: 1em, below: 1em)
     it
@@ -178,7 +167,7 @@
 
   show_cover(infos: infos)
 
-  if show_toc {toc(lang: lang)}
+  if show_toc {toc(toc_break: toc_break, depth: toc_depth)}
 
   body
 }
