@@ -151,6 +151,7 @@
 
 #let show_cover(infos: (:)) = {
   // 如果 report_type 中含有数字，则提取并细化设置 report 类型，默认为 1
+  if (infos.cover_style == false) {return;} // no cover
   let report_type = if infos.cover_style.match(regex("\d+")) != none {infos.cover_style.match(regex("\d+")).text} else {"1"}
   let cover_style = infos.cover_style.trim(report_type)
   if cover_style == "report" and infos.show_name { cover_report(type: report_type, ..infos) } // 实验报告

@@ -7,12 +7,12 @@
 #import "packages/thms/0.1.0/lib.typ": *
 
 // 导入 preview 包
-// 可变长箭头、树、图文包裹、图标、真值表
-#import "@preview/xarrow:0.3.0": xarrow, xarrowSquiggly, xarrowTwoHead
+// 树、图文包裹、图标、真值表
 #import "@preview/syntree:0.2.0": syntree, tree
 #import "@preview/treet:0.1.0": tree-list
 #import "@preview/wrap-it:0.1.0": wrap-content, wrap-top-bottom
 #import "@preview/fontawesome:0.1.0": *
+#import "@preview/fletcher:0.4.4" as fletcher: diagram, node, edge
 #import "@preview/cheq:0.1.0": checklist
 
 // 假段落
@@ -54,10 +54,10 @@
   date: (2023, 5, 14),
   lang: "en",
   size: "四号",
-  font_style: 字体.宋体,
+  font: 字体.宋体,
 ) = {
   if type(size) != length {size = 字号.at(size)}
-  set text(font: font_style, size: size);
+  set text(font: font, size: size);
   if lang == "zh" {
     [#date.at(0)年#date.at(1)月#date.at(2)日]
   } else {   // 美式日期格式，月日年

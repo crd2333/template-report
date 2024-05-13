@@ -57,27 +57,34 @@
   show: shorthand // 导入 math shorthand
   show: codly-init.with()
 
+  let header1 = [#locate(loc => {
+    if (counter(page).at(loc).first()<=2) {none}
+    else {align(right, text(size: 10pt, weight: "bold", title))}
+    })]
+  let header2 = [
+    #place(left+horizon, text(size: 10pt, title))
+    #place(center+horizon, text(size: 10pt, title_2))
+    #place(right+horizon, date_format(date: date, lang: lang, size: 10pt))
+    #pad(y: 8pt, hline())
+  ]
+  let footer1 = [#locate(loc => {
+    set align(center)
+    set text(10pt)
+    if (counter(page).at(loc).first()<=2) {none}
+    else {"Page " + counter(page).display("1 of 1", both: true)}
+  })]
   set document(title: title, author: author)
   set page(
     paper: "a4",
     numbering: "1",
-    header:
-      if header {
-        locate(loc => {
-          if (counter(page).at(loc).first() <= 2) {none}
-          else {align(right, text(size: 10pt, weight: "bold", title))}
-        })
-      } else {none},
-    footer:
-      if footer {
-        locate(loc => {
-          set align(center)
-          set text(10pt)
-          if (counter(page).at(loc).first() <= 2) {none}
-          else {"Page " + counter(page).display("1 of 1", both: true)}
-        })
-      } else {none},
     margin: (x: 2cm, y: 1.5cm),
+    header:
+      if (header == true or header == "type1") {header1}
+      else if (header == "type2") {header2}
+      else {none},
+    footer:
+      if (footer == true or footer == "type1") {footer1}
+      else {none},
   )
 
   // 设置字体与语言
