@@ -4,7 +4,8 @@
 // emoji、两种 box
 #import "packages/svg-emoji/0.1.0/lib.typ": setup-emoji, github
 #import "packages/admonition/0.3.0/lib.typ": *
-#import "packages/thms/0.1.0/lib.typ": *
+#import "packages/thms/0.2.0/lib.typ": *
+#import "@preview/indenta:0.0.3": fix-indent
 
 // 导入 preview 包
 // 树、图文包裹、图标、真值表
@@ -12,10 +13,10 @@
 #import "@preview/treet:0.1.0": tree-list
 #import "@preview/wrap-it:0.1.0": wrap-content, wrap-top-bottom
 #import "@preview/fontawesome:0.1.0": *
-#import "@preview/fletcher:0.4.4" as fletcher: diagram, node, edge
 #import "@preview/cheq:0.1.0": checklist
+#import "@preview/pinit:0.1.4": *
 
-// 假段落
+// 假段落，deprecated
 #let fake_par = style(styles => {
   let b = par[#box()]
   let t = measure(b + b, styles)
@@ -109,8 +110,19 @@
 #let redt(body) = text(fill: colors.red, body) // red-text
 #let bluet(body) = text(fill: colors.blue, body) // blue-text
 
-// 自动数学环境，在 block 中以 `show: automath` 使用，或对表格等使用
-#let automath = it => {
-  show regex("\d+(.\d+)*"): it => $it$
-  it
+// pinit 的公式高亮指针
+#let pinit-highlight-equation-from(height: 2em, pos: bottom, fill: rgb(0, 180, 255), highlight-pins, point-pin, body) = {
+  pinit-highlight(..highlight-pins, dy: -0.6em, fill: rgb(..fill.components().slice(0, -1), 40))
+  pinit-point-from(
+    fill: fill, pin-dx: -0.6em, pin-dy: if pos == bottom { 0.8em } else { -0.6em }, body-dx: 0pt, body-dy: if pos == bottom { -1.7em } else { -1.6em }, offset-dx: -0.6em, offset-dy: if pos == bottom { 0.8em + height } else { -0.6em - height },
+    point-pin,
+    rect(
+      inset: 0.5em,
+      stroke: (bottom: 0.12em + fill),
+      {
+        set text(fill: fill)
+        body
+      }
+    )
+  )
 }

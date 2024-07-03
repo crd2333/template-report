@@ -1,4 +1,5 @@
 #import "@preview/quick-maths:0.1.0": shorthands
+#import "@preview/mitex:0.2.4": *
 
 // 以类似格式添加符号缩写
 #let shorthand = shorthands.with(

@@ -1,4 +1,5 @@
 #import "../lib.typ": *
+
 #show: project.with(
   title: "Test Title",
   title_2: "Project 1",
@@ -22,41 +23,41 @@
 == 文字测试
 
 === 关于字体
-字体：先在"Arial"中寻找，找不到才在黑体、宋体等中文字体中寻找，通过这种方法实现*先英文字体、后中文字体*的效果。这个字体可以先去搜索下载，或者直接在终端中输入"typst fonts"查看你电脑上的字体，然后修改`font.typ`相关内容为你拥有且喜爱的字体。
+字体：先在"Arial"中寻找，找不到才在黑体、宋体等中文字体中寻找，通过这种方法实现*先英文字体、后中文字体*的效果。这个字体可以先去搜索下载（#link("https://github.com/notofonts/noto-cjk/releases")[下载链接]，下载Noto Serif CJK和Noto Sans CJK），或者直接在终端中输入"typst fonts"查看你电脑上的字体，然后修改`font.typ`相关内容为你拥有且喜爱的字体。
 
 English test: Let's have a try! And
 this is a dot. This is a quote "". 英文标点也是正常显示。
 
-_斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体（事实上，如果字体选择不佳，连粗体都没有），一般用楷体代替 ```typ show emph: text.with(font: ("Arial", "LXGW WenKai"))```
+_斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体（事实上，如果字体选择不佳，连粗体都没有），一般用楷体代替 ```typ #show emph: text.with(font: ("Arial", "LXGW WenKai"))```
 
-如果真的需要斜体，可以使用伪斜体（旋转得到，可能会有一些 bug？）：#fake-italic[中文伪斜体]。
+如果需要真正的斜体，可以使用伪斜体（旋转得到，可能会有 bug？）：#fake-italic[中文伪斜体]。
 
-中英文字体之间正常情况下会自动添加空格，像这样test一下。手动添加空格也可以（对Arial字体而言），像这样 test 一下，间隙增加可以忽略不计。如果换用其它字体，可能会出现手动空格导致间隙过大的情况。
+中英文字体之间正常情况下会自动添加空格，像这样test一下。手动添加空格也可以（对Arial和思源字体而言），像这样 test 一下，间隙增加可以忽略不计。如果换用其它字体，可能会出现手动空格导致间隙过大的情况。
 
 === 关于缩进
-默认情况下，每段开头都会缩进，可以使用`#noindent[Something]`来取消缩进，比如下面这样：
+使用一个比较 tricky 的包 #link("https://github.com/flaribbit/indenta")[indenta] 来达到类似 LaTeX 中的缩进效果：两行文字间隔一行则缩进，否则不缩进。可能会遇到一些 bug，此时可以使用```typ #noindent[Something]```来取消缩进，比如下面这样：
 
 #hline()
 
 #noindent[
   这是一个没有缩进的段落。
 
-  这是另一个没有缩进的段落。\
+  空一行，本来应该缩进，但被取消。\
   采用连接符换行。
 ]
 
 #hline()
 
-而这样的内容在原始情况下是这样显示：
+而在原始情况下是这样：
 
-这是一个没有缩进的段落。
+这是一个有缩进的段落。
 
-这是另一个没有缩进的段落。\
+空一行，缩进，但被取消。
+不空行，视为跟之前同一段落。\
 采用连接符换行。
-
 #hline()
 
-#indent 另外，通过 `#indent`（或`#tab`）能缩进内容，比如在图表之后，需要手动缩进。其实可以自动缩进，只是个人认为，图表后是否缩进还是由作者手动控制比较好。
+#indent 另外，通过 `#indent`（或`#tab`）能缩进内容，比如在图表之后，需要手动缩进。其实也可以自动缩进，只是个人认为，图表后是否缩进还是由作者手动控制比较好。
 
 == 图表测试
 引用图表时，表格、图片和代码分别需要加上 `tbl:`、`fig:` 和 `lst:` 前缀。至于缩进问题前已述。
@@ -80,7 +81,7 @@ $ F_n = floor(1 / sqrt(5) phi.alt^n) $ <->
 #show: shorthands.with(
   ($+-$, $plus.minus$),
   ($|-$, math.tack),
-  ($<=$, math.arrow.l.double) // Replaces '≤'
+  ($<=$, math.arrow.l.double) // Replaces '≤', use =< as '≤'
 )
 ```
 
@@ -89,6 +90,23 @@ $ A or B |- A $
 $ x <= y $
 
 === 代码
+code使用codly实现，会自动捕捉所有成块原始文本，像下面这样，无需调用code命令（调用code命令则是套一层 figure，加上 caption）。
+
+可以手动禁用 codly ```typ #disable-codly()```，后续又要使用则再 ```typ #codly()``` 加回来
+
+#disable-codly()
+```raw
+disabled code
+```
+#codly()
+```raw
+enabled code
+```
+
+代码块经过特殊处理，注释内的斜体、粗体、数学公式会启用 eval
+```cpp
+cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
+```
 #code(
   caption: "This is a code listing",
 )[
@@ -103,26 +121,12 @@ $ x <= y $
 
 #indent 引用代码 @lst:code
 
-注意，code使用codly实现，会自动捕捉所有成块原始文本，像下面这样，如果不想这样，需要手动指定 ```typ #disable-codly()```，后续又要使用使再 ```typ #codly()``` 加回来
-
-#disable-codly()
-```raw
-并没有调用code命令
-```
-#codly()
-```raw
-并没有调用code命令
-```
-
 === 表格
-表格内容自动数学环境：```typ #show table.cell: automath```，通过正则表达式实现。
-#show table.cell: automath
+表格通过原生 table 封装到 figure 中，并添加自动数学环境参数：```typ automath: true```，通过正则表达式检测数字并用 `$` 包裹。
 #tbl(
-  caption: "Multiplier",
-  fill: (x, y) =>
-    if y == 0 {
-      aqua.lighten(40%)
-    },
+  automath: true,
+  caption: "《计算机组成》：Multiplier",
+  fill: (x, y) => if y == 0 {aqua.lighten(40%)},
   columns: 4,
   [Iteration],[Step],[Multiplicand],[Product / Multiplicator],
   [0],[initial values],[01100010],[00000000 00010010],
@@ -137,18 +141,18 @@ $ x <= y $
 
 #align(center, (stack(dir: ltr)[
   #tbl(
-    fill: (x, y) => if y == 0 {
-        aqua.lighten(40%)
-      },
+    // automath: true,
+    fill: (x, y) => if y == 0 {aqua.lighten(40%)},
     columns: 4,
     [t], [1], [2], [3],
     [y], [0.3s], [0.4s], [0.8s],
     caption: [常规表],
   ) <timing>
-][
-  #h(50pt)
-][
+  ][
+    #h(50pt)
+  ][
   #tlt(
+    // automath: true,
     columns: 4,
     [t], [1], [2], [3],
     [y], [123.123s], [0.4s], [0.8s],
@@ -158,31 +162,30 @@ $ x <= y $
 
 引用@tbl:timing，引用@tbl:timing-tlt。
 
-三线表，引用@tbl:test2。
-
-#tlt(
-columns: (auto, auto),
-  [姓名], [性别],
-  [张三], [男],
-  [李四], [女],
-  caption: "测试表格",
-) <test2>
-
-#tab 由于习惯了 markdown 的表格，所以 typst 的表格语法可能不太习惯（其实强大很多），但是也有类 markdown 表格 package 的实现：
-#tblm(caption: "tablem实现的类markdown表格")[
+由于习惯了 markdown 的表格，所以 typst 的表格语法可能不太习惯（其实强大很多），但是也有类 markdown 表格 package 的实现：
+#tblm(caption: "tablem 实现的类 markdown 表格")[
   | *Name* | *Location* | *Height* | *Score* |
   | ------ | ---------- | -------- | ------- |
   | John   | Second St. | 180 cm   |  5      |
   | Wally  | Third Av.  | 160 cm   |  10     |
 ]
 
-= 第二个大标题 <caption_2>
+使用 typst 的数据加载语法，可以读取 csv, json 等格式的数据，以此实现了一些更加快捷（但比较简单，如果要支持合并单元格之类则较困难）的表格。比如下面这个 csv 表格：
+#csvtable(
+  caption: "CSV Table",
+  ```
+  1,2,3
+  4,5,6
+  ```
+)
+
+= Chapter 2 <caption_2>
 #fig("../assets/校名.jpg", caption: "测试图片, 浙江大学", width: 50%) <test2>
 
 图片测试引用@fig:test2，可以看到现在的编号是 2 开头。
 
 == 列表
-Bubble list 语法（更改了部分图标）：
+Bubble list 语法（更改了图标，使其更类似 markdown，且更大）：
 - 无序列表项一
 - 无序列表项二
   - 无序子列表项一
@@ -193,7 +196,7 @@ Bubble list 语法（更改了部分图标）：
   + 有序子列表项一
   + 有序子列表项二
 
-#tab Term list 语法：
+Term list 语法：
 / a: Something
 / b: Something
 
@@ -247,11 +250,6 @@ Typst 中的 cetz 就像 LaTeX 中的 tikz 一样，提供强大的画图功能�
   $)
 ))
 
-
-=== todo(checklist)
-- [ ] 加入更多layouts，比如前言、附录
-- [x] 重构代码，使得可以根据语言切换文档类型
-
 === syntree & treet
 语法树，像这样，可以用字符串解析的方式来写，不过个人更喜欢后一种自己写 `tree` 的方式，通过合理的缩进更加易读。
 #let bx(col) = box(fill: col, width: 1em, height: 1em)
@@ -298,25 +296,25 @@ GitHub表情(github-named emojis): `#github.blue_car` #github.blue_car
 #note()[我自己写的admonition块]
 #info(caption: "标题与字号可以自定义", caption_size: 16pt, size: 9pt)[图标、内容字号也可以传入修改]
 
-#tab 好康的定理块：
+#tab 好康且自动计数的定理块：
 
-#theorem(title: "This is a title", lorem(20)) <thm2>
+#theorem(title: [#text(fill: green, "This is a title")])[Now the counter increases by 1 for type `Theorem`.] <thm2>
 
 #theorem(footer: [The showybox allowes you add footer for boxes, useful when giving some explanation.])[#lorem(20)] <thm1>
 
-#definition[The counter will be reset after the first level of heading changes (counting within one chapter).]
+#definition[The counter will be reset after the first level of heading changes, i.e. counting within one chapter(can be changed)).]
 
-#theorem(title: [#text(fill: green, "This is another title")])[Now the counter increases by 1 for type `Theorem`.]
-
-#corollary([One body.], footer: [As well as footer!])[Another body!]
+#corollary(title: "a title", [Another body!])[Corollary counter based on theorem(can be changed).]
 
 #lemma[#lorem(20)]
 
 #proof[By default the `Proof` will not count itself.\ And the `Proof` box will have a square at the right bottom corner.]
 
+#example()[By default the `example` will not count itself.]
+
 #noindent[
-@thm1 or @fig:thm1 (Use the label name or `fig:` + `<label name>` to refer)\
-@thm2 or @fig:thm2 (the former is controlled by yourself, the latter will show the index)
+@thm1 (Use the label name to refer)\
+@thm2
 ]
 
 === 伪代码（算法）
@@ -375,6 +373,59 @@ lovelace包，可以用来写伪代码，body 最好用 typ，比如：
   ($a and b$, $a or b$),
   (false, [], true, [] , true, false)
 )
+
+=== todo(checklist)
+- [ ] 加入更多layouts，比如前言、附录
+- [x] 重构代码，使得可以根据语言切换文档类型
+
+=== Pinit
+#warning()[You should add a blank line before the `#pinit-xxx` function call, otherwise it will cause misalignment.]
+
+#v(2em)
+
+$ (#pin(1)q_T^* p_T#pin(2))/(p_E#pin(3))#pin(4)p_E^*#pin(5) >= (c + q_T^* p_T^*)(1+r^*)^(2N) $
+
+#pinit-highlight-equation-from((1, 2, 3), 3, height: 3.5em, pos: bottom, fill: rgb(0, 180, 255))[
+  In math equation
+]
+
+#pinit-highlight-equation-from((4, 5), 5, height: 1.5em, pos: top, fill: rgb(150, 90, 170))[
+  price of Terran goods, on Trantor
+]
+
+`print(pin6"hello, world"pin7)`
+
+#pinit-highlight(6, 7)
+#pinit-point-from(7)[In raw text]
+
+#v(4em)
+
+这玩意儿的用法略灵活，可以看它的仓库 #link("https://github.com/typst/packages/tree/main/packages/preview/pinit/0.1.4")[pinit]
+
+=== mitex
+使用 #link("https://github.com/typst/packages/tree/main/packages/preview/mitex/0.2.4")[mitex] 包渲染 LaTeX 数学环境，比如：
+
+通过这个包，可以快速把已经在 Markdown 或 LaTeX 中的公式重复利用起来；同时，利用市面上众多的 LaTeX 公式识别工具，可以减少很多工作。
+
+#mitex(`
+  \newcommand{\f}[2]{#1f(#2)}
+  \f\relax{x} = \int_{-\infty}^\infty
+    \f\hat\xi\,e^{2 \pi i \xi x}
+    \,d\xi
+`)
+#mitext(`
+  \iftypst
+    #set math.equation(numbering: "(1)", supplement: "equation")
+  \fi
+
+  A \textbf{strong} text, a \emph{emph} text and inline equation $x + y$.
+
+  Also block \eqref{eq:pythagoras}.
+
+  \begin{equation}
+    a^2 + b^2 = c^2 \label{eq:pythagoras}
+  \end{equation}
+`)
 
 #pagebreak()
 #bibliography("../assets/exbib.bib", style: "ieee", title: "References")
