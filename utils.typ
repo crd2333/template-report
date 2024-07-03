@@ -15,6 +15,7 @@
 #import "@preview/fontawesome:0.1.0": *
 #import "@preview/cheq:0.1.0": checklist
 #import "@preview/pinit:0.1.4": *
+#import "@preview/numbly:0.1.0": numbly
 
 // 假段落，deprecated
 #let fake_par = style(styles => {

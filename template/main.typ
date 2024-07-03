@@ -185,16 +185,17 @@ cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
 图片测试引用@fig:test2，可以看到现在的编号是 2 开头。
 
 == 列表
-Bubble list 语法（更改了图标，使其更类似 markdown，且更大）：
-- 无序列表项一
-- 无序列表项二
-  - 无序子列表项一
-  - 无序子列表项二
-
-+ 有序列表项一
-+ 有序列表项二
-  + 有序子列表项一
-  + 有序子列表项二
+Bubble list 语法（更改了图标，使其更类似 markdown，且更大）和 enum 语法：
+- 你说
+  - 得对
+    - 但是
+      - 原神
++ 是一款
++ 由米哈游
+  + 开发的
+  + 开放世界
+    + 冒险
+    + 游戏
 
 Term list 语法：
 / a: Something

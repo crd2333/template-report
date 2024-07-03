@@ -95,6 +95,7 @@
   set text(font: 字体.宋体, size: 字号.小四, lang: lang)
   set par(first-line-indent: 2em)
   set list(marker: ([●], [○], [■], [□], [►])) // 设置 bullet list 的 marker，相比默认更像 markdown，另外刻意调大了一点（适合老年人
+  set enum(numbering: numbly("{1}.", "{2:a}.", "{3:i}."), full: true)
   show emph: text.with(font: 字体.楷体) // 中文斜体显示为楷体
 
   // 设置标题
