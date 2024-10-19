@@ -36,7 +36,6 @@
   ..args
 ) = {
   let author = if show_name {author} else {none};
-  set page("a4", numbering: none, margin: (top: 10%));
   align(center)[
     #image("assets/校名.jpg", width: 60%)
     #v(4em)
@@ -151,7 +150,7 @@
 
 #let show_cover(infos: (:)) = {
   // 如果 report_type 中含有数字，则提取并细化设置 report 类型，默认为 1
-  if (infos.cover_style == false) {return;} // no cover
+  if (infos.cover_style == false or infos.cover_style == "" or infos.cover_style == none) {return;} // no cover
   let report_type = if infos.cover_style.match(regex("\d+")) != none {infos.cover_style.match(regex("\d+")).text} else {"1"}
   let cover_style = infos.cover_style.trim(report_type)
   if cover_style == "report" and infos.show_name { cover_report(type: report_type, ..infos) } // 实验报告

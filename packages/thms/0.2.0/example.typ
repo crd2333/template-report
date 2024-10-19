@@ -7,11 +7,11 @@
 = Prime numbers
 
 = First level heading
-#theorem(footer: [The showybox allowes you add footer for boxes, useful when giving some explanation.])[#lorem(20)] <thm1>
+#theorem(footer: [The showybox allowes you add footer for boxes, useful when giving some explanation.])[#lorem(10)] <thm1>
 
 = Another first level heading
 
-#theorem(lorem(20)) <thm2>
+#theorem(lorem(10)) <thm2>
 
 == Second level heading
 #definition[The counter will be reset after the first level of heading changes, i.e. counting within one chapter(can be changed)).]
@@ -20,12 +20,12 @@
 
 #corollary(title: [a title], [Another body!], footer: [As well as footer!])[Corollary counter based on theorem(can be changed).]
 
-#lemma[#lorem(20)]
+#lemma[#lorem(10)]
 
 #proof[By default the `Proof` will not count itself.\ And the `Proof` box will have a square at the right bottom corner.]
 
 #example()[By default the `example` will not count itself.]
 
-@thm1 (Use the label name to refer)
+@thm1[self-defined name]
 
 @thm2

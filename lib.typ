@@ -43,22 +43,30 @@
   ) + (lang: lang, cover_style: cover_style, show_name: show_name)
 
   // 设置 page
-  let header1 = locate(loc => {
-    if (counter(page).at(loc).first()<=2) {none}
+  let header1 = context { // ignore cover and toc
+    if (counter(page).get().first() <= 2) {none}
     else {align(right, text(size: 10pt, weight: "bold", title))}
-  })
-  let header2 = {
+  }
+  let header2 = { // all
+    align(right, text(size: 10pt, weight: "bold", title))
+  }
+  let header3 = { // header with more information
     place(left+horizon, text(size: 10pt, title))
     place(center+horizon, text(size: 10pt, title_2))
     place(right+horizon, date_format(date: date, lang: lang, size: 10pt))
     pad(y: 8pt, hline())
   }
-  let footer1 = locate(loc => {
+  let footer1 = context { // ignore cover and toc
     set align(center)
     set text(10pt)
-    if (counter(page).at(loc).first()<=2) {none}
+    if (counter(page).get().first() <= 2) {none}
     else {"Page " + counter(page).display("1 of 1", both: true)}
-  })
+  }
+  let footer2 = context { // all
+    set align(center)
+    set text(10pt)
+    "Page " + counter(page).display("1 of 1", both: true)
+  }
   set document(title: title, author: author)
   set page(
     paper: "a4",
@@ -67,18 +75,20 @@
     header:
       if (header == true or header == "type1") {header1}
       else if (header == "type2") {header2}
+      else if (header == "type3") {header3}
       else {none},
     footer:
       if (footer == true or footer == "type1") {footer1}
+      else if (footer == "type2") {footer2}
       else {none},
   )
+
+  set-page-properties() // drafting
 
   // 导入 show 规则
   show heading: i-figured.reset-counters
   show figure: i-figured.show-figure
   show math.equation: i-figured.show-equation
-  show: setup-emoji
-  show: setup-lovelace // 注意这一行必须在 i-figure 后，否则会被覆盖而出 bug
   show: checklist.with(fill: luma(95%), stroke: blue, radius: .2em)
   show: thmrules  // 导入 theorem 环境
   show: shorthand // 导入 math shorthand
@@ -128,9 +138,9 @@
       verilog: (name: "Verilog", icon: verilog_svg, color: rgb("#FF6666")),
       Verilog: (name: "Verilog", icon: verilog_svg, color: rgb("#FF6666")),
     ),
-    zebra-color: luma(250),
+    // zebra-color: luma(250),
     fill: luma(250),
-    // stroke-width: 1pt,
+    // stroke: 1pt,
     // display-name: false,
     // display-icon: false
   )
@@ -145,32 +155,10 @@
   show raw.where(block: false): it => h(0.25em, weak: true) + it + h(0.25em, weak: true)
   show raw: set text(font: (字体.meslo-mono, 字体.思源宋体)) // 代码中文字体
   show raw: it => {
-    // 对各种语言的注释启用 eval，使得可以在注释中使用斜体、粗体和数学公式等
-    let slash_lang = ("c", "c++", "cpp", "Cpp", "typ", "typc", "rust", "rs", "js", "javascript", "ts", "typescript")
-    let comment-style = if it.lang in slash_lang or it.lang == none {"//"} else {"#"}
-    show raw.line: it => {
-      let body = it.body;
-      let comment-token = if "children" in it.body.fields() {
-        it.body.children.position(it => {
-          if "child" in it.fields() {
-            it.child.text.starts-with(comment-style)
-          } else {
-            it.text.starts-with(comment-style)
-          }
-        })
-      }
-      if comment-token == none {return it}
-      it.body.children.slice(0, comment-token).join()
-      let matched = it.text.match(regex(comment-style + "[\s\S]*")).text
-      let e = matched.slice(2).trim(at: start)
-      text(fill: gray.darken(15%), comment-style)
-      matched.slice(comment-style.len(), matched.len() - e.len())
-      text(fill: gray.darken(15%), eval(e, mode: "markup"))
-    }
-    // pinit package for raw
-    show regex("pin\d"): it => pin(eval(it.text.slice(3)))
+    show regex("pin\d"): it => pin(eval(it.text.slice(3))) // pinit package for raw
     it
   }
+  // show raw: comment_process // maybe bugs
   set raw(syntaxes: "assets/Assembly.sublime-syntax") // 汇编代码的语法高亮
 
   show: fix-indent() // 一个很 tricky 的包，需放在所有 show 规则的最后

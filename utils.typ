@@ -1,29 +1,23 @@
-#import "fonts.typ":*
-
 // 导入本地包
-// emoji、两种 box
-#import "packages/svg-emoji/0.1.0/lib.typ": setup-emoji, github
+#import "fonts.typ":*
 #import "packages/admonition/0.3.0/lib.typ": *
 #import "packages/thms/0.2.0/lib.typ": *
-#import "@preview/indenta:0.0.3": fix-indent
 
 // 导入 preview 包
 // 树、图文包裹、图标、真值表
 #import "@preview/syntree:0.2.0": syntree, tree
-#import "@preview/treet:0.1.0": tree-list
+#import "@preview/treet:0.1.1": tree-list
 #import "@preview/wrap-it:0.1.0": wrap-content, wrap-top-bottom
-#import "@preview/fontawesome:0.1.0": *
-#import "@preview/cheq:0.1.0": checklist
-#import "@preview/pinit:0.1.4": *
+#import "@preview/fontawesome:0.4.0": *
+#import "@preview/cheq:0.2.0": checklist
+#import "@preview/pinit:0.2.0": *
+#import "@preview/indenta:0.0.3": fix-indent
 #import "@preview/numbly:0.1.0": numbly
+#import "@preview/drafting:0.2.0": *
+#import "@preview/oxifmt:0.2.1": strfmt
 
 // 假段落，deprecated
-#let fake_par = style(styles => {
-  let b = par[#box()]
-  let t = measure(b + b, styles)
-  b
-  v(-t.height * 0.9)
-})
+#let fake_par = context{box();v(-measure(block()+block()).height)}
 
 // 中文缩进
 #let indent = h(2em)
@@ -107,6 +101,19 @@
   line(length: 100%)
 }
 
+// 快捷 grid
+#let grid2(body1, body2) = grid(
+  columns: 2,
+  grid.cell(align: center+horizon)[#body1],
+  grid.cell(align: center+horizon)[#body2]
+)
+#let grid3(body1, body2, body3) = grid(
+  columns: 3,
+  grid.cell(align: center+horizon)[#body1],
+  grid.cell(align: center+horizon)[#body2],
+  grid.cell(align: center+horizon)[#body3]
+)
+
 // 快捷文字着色，实现了红色蓝色，黑色则为粗体，两个 * 即可
 #let redt(body) = text(fill: colors.red, body) // red-text
 #let bluet(body) = text(fill: colors.blue, body) // blue-text
@@ -126,4 +133,35 @@
       }
     )
   )
+}
+
+// 对各种语言的注释启用 eval，使得可以在注释中使用斜体、粗体和数学公式等
+#let comment_process = it => {
+  let slash_lang = ("c", "c++", "cpp", "Cpp", "typ", "typc", "rust", "rs", "js", "javascript", "ts", "typescript")
+  let comment-style = if it.lang in slash_lang or it.lang == none {"//"} else {"#"}
+  show raw.line: it => {
+    let body = it.body
+    let comment-token = if "children" in it.body.fields() {
+      it.body.children.position(it => {
+        if "child" in it.fields() {
+          it.child.text.starts-with(comment-style)
+        } else {
+          it.text.starts-with(comment-style)
+        }
+      })
+    }
+    if comment-token == none {return it}
+    it.body.children.slice(0, comment-token).join()
+    let matched = it.text.match(regex(comment-style + "[\s\S]*")).text
+    let comment = matched.match(regex("^" + comment-style + "+")) // ^//+ or ^#+
+    let comment_len = if comment != none {comment.end} else {0}
+    let e = matched.slice(comment_len).trim(at: start)
+    let comment-style = if comment-style == "//" {"/"} else {comment-style}
+    text(fill: gray.darken(15%), comment-style * comment_len)
+    matched.slice(comment_len, matched.len() - e.len())
+    // change * to be \*, other wise pointers in Cpp will be regarded as bold symbol, the same reason for "<" and ">"
+    let e = e.replace("*", "\*").replace("<", "\<").replace(">", "\>")
+    text(fill: gray.darken(15%), eval(e, mode: "markup"))
+  }
+  it
 }

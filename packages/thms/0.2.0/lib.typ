@@ -1,8 +1,7 @@
-// the 0.1.0 version is not efficient like ctheorem, so implement the thms by showybox based on [ctheorem](https://github.com/sahasatvik/typst-theorems/)
+// implement the thms by showybox based on [ctheorem](https://github.com/sahasatvik/typst-theorems/)
 
 #import "@preview/showybox:2.0.1": showybox
 
-// Store theorem environment numbering
 #let thmcounters = state("thm",
   (
     "counters": ("heading": ()),
@@ -17,7 +16,6 @@
   return (
     ..args,
     body,
-    title: none,
     number: auto,
     numbering: "1.1",
     refnumbering: auto,
@@ -37,11 +35,12 @@
       number = none
     }
     if number == auto and numbering != none {
-      result = locate(loc => {
+      result = context {
+        let heading-counter = counter(heading).get()
         return thmcounters.update(thmpair => {
           let counters = thmpair.at("counters")
           // Manually update heading counter
-          counters.at("heading") = counter(heading).at(loc)
+          counters.at("heading") = heading-counter
           if not identifier in counters.keys() {
             counters.insert(identifier, (0, ))
           }
@@ -77,16 +76,14 @@
             "latest": latest
           )
         })
-      })
+      }
 
-      number = thmcounters.display(x => {
-        return global_numbering(numbering, ..x.at("latest"))
-      })
+      number = context global_numbering(numbering, ..thmcounters.get().at("latest"))
     }
 
     return figure(
       result +  // hacky!
-      fmt(number, title, body, ..args) +
+      fmt(name, number, body, ..args.named()) +
       [#metadata(identifier) <meta:thmenvcounter>],
       kind: "thmenv",
       outlined: false,
@@ -105,18 +102,35 @@
   ..blockargs,
   supplement: auto,
   padding: (top: 0.5em, bottom: 0.5em),
-  separator: [#h(0.1em):#h(0.2em)],
+  namefmt: x => [(#x)],
+  titlefmt: strong,
   bodyfmt: x => x,
+  separator: [#h(0.1em):#h(0.2em)],
   base: "heading",
   base_level: none,
 ) = {
   if supplement == auto {
     supplement = head
   }
-  let boxfmt(number, title, body, ..blockargs_individual) = {
-    if title != none {
-      title = ": " + title
+  let boxfmt(name, number, body, title: auto, ..blockargs_individual) = {
+    if not name == none {
+      name = [ #namefmt(name)]
+    } else {
+      name = []
     }
+    if title == auto {
+      title = head
+      if not number == none {
+        title += " " + number
+      }
+    } else {
+      if not number == none {
+        title = head + " " + number + ": " + title
+      } else {
+        title = head + ": " + title
+      }
+    }
+    title = titlefmt(title)
     body = bodyfmt(body)
     pad(
       ..padding,
@@ -138,8 +152,8 @@
         sep: (
           dash: "dashed",
         ),
-        title: [#head #number#title],
-        [#body],
+        title: title,
+        body,
         ..blockargs_individual,
         ..blockargs.named()
       ),
@@ -155,19 +169,25 @@
   )
 }
 
-
 #let thmplain = thmbox.with(
   padding: (top: 0em, bottom: 0em),
   breakable: true,
+  inset: (top: 0em, left: 1.2em, right: 1.2em),
+  namefmt: name => emph([(#name)]),
+  titlefmt: strong,
 )
+
 
 // Track whether the qed symbol has already been placed in a proof
 #let thm-qed-done = state("thm-qed-done", false)
 
+// The configured QED symbol
+#let thm-qed-symbol = state("thm-qed-symbol", "a")
+
 // Show the qed symbol, update state
 #let thm-qed-show = {
-  thm-qed-done.update("thm-qed-symbol")
-  thm-qed-done.display()
+  thm-qed-done.update(true)
+  context thm-qed-symbol.get()
 }
 
 // If placed in a block equation/enum/list, place a qed symbol to its right
@@ -203,16 +223,25 @@
 #let proof-bodyfmt(body) = {
   thm-qed-done.update(false)
   body
-  locate(loc => {
-    if thm-qed-done.at(loc) == false {
+  context {
+    if thm-qed-done.at(here()) == false {
       h(1fr)
       thm-qed-show
     }
-  })
+  }
 }
 
-#let thmrules(qed-symbol: $qed$, doc) = {
+#let thmproof(..args) = thmplain(
+    ..args,
+    namefmt: emph,
+    bodyfmt: proof-bodyfmt,
+    ..args.named()
+).with(numbering: none)
 
+
+#let thmrules(qed-symbol: $square$, doc) = {
+
+  show figure.where(kind: "thmenv"): set align(start)
   show figure.where(kind: "thmenv"): it => it.body
 
   show ref: it => {
@@ -232,7 +261,7 @@
     }
 
     let loc = it.element.location()
-    let thms = query(selector(<meta:thmenvcounter>).after(loc), loc)
+    let thms = query(selector(<meta:thmenvcounter>).after(loc))
     let number = thmcounters.at(thms.first().location()).at("latest")
     return link(
       it.target,
@@ -267,7 +296,7 @@
     it
   }
 
-  show "thm-qed-symbol": qed-symbol
+  thm-qed-symbol.update(qed-symbol)
 
   doc
 }

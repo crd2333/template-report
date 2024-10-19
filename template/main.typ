@@ -6,7 +6,8 @@
   author: ("crd233", "张三"),
   date: (2024, 2, 30),
   cover_style: "report",   // report, report1, report2, report3 或其它，false 或 "" 表示无封面
-  header: true, // true or "type1" 使用默认页眉，"type2" 为一个略详细一点的页眉
+  header: "type1", // true or "type1" 使用默认页眉，"type2" 为一个略详细一点的页眉
+  footer: "type1",
   show_toc: true,
   show_name: true,   // 是否匿名
   lang: "zh",   // 支持切换语言为 en、zh，会连带更改日期格式、图表标题等
@@ -92,13 +93,11 @@ $ x <= y $
 === 代码
 code使用codly实现，会自动捕捉所有成块原始文本，像下面这样，无需调用code命令（调用code命令则是套一层 figure，加上 caption）。
 
-可以手动禁用 codly ```typ #disable-codly()```，后续又要使用则再 ```typ #codly()``` 加回来
-
-#disable-codly()
-```raw
-disabled code
-```
-#codly()
+#no-codly[
+  ```raw
+  disabled code
+  ```
+]
 ```raw
 enabled code
 ```
@@ -218,36 +217,36 @@ Typst 中的 cetz 就像 LaTeX 中的 tikz 一样，提供强大的画图功能�
   node-stroke: .1em,
   node-fill: gradient.radial(blue.lighten(80%), blue, center: (30%, 20%), radius: 80%),
   spacing: 4em,
-  edge((-1,0), "r", "-|>", [open(path)], label-pos: 0, label-side: center),
+  edge((-1,0), "r", [open(path)], label-pos: 0, label-side: center),
   node((0,0), [reading], radius: 2em),
-  edge([read()], "-|>"),
+  edge([read()]),
   node((1,0), [eof], radius: 2em),
-  edge([close()], "-|>"),
+  edge([close()]),
   node((2,0), [closed], radius: 2em, extrude: (-2.5, 0)),
-  edge((0,0), (0,0), [read()], "--|>", bend: 130deg),
-  edge((0,0), (2,0), [close()], "-|>", bend: -40deg),
+  edge((0,0), (0,0), [read()], marks: "--|>", bend: 130deg),
+  edge((0,0), (2,0), [close()], bend: -40deg),
 )
 #align(center, grid(
   columns: 3,
   gutter: 8pt,
   diagram(cell-size: 15mm, $
-    G edge(f, ->) edge("d", pi, ->>) & im(f) \
-    G slash ker(f) edge("ur", tilde(f), "hook-->")
+    G edge(f) edge("d", pi) & im(f) \
+    G slash ker(f) edge("ur", tilde(f))
   $),
   diagram(
     node-stroke: 1pt,
     edge-stroke: 1pt,
     node((0,0), [Start], corner-radius: 2pt, extrude: (0, 3)),
-    edge("-|>"),
+    edge(),
     node((0,1), align(center)[
       Hey, wait,\ this flowchart\ is a trap!
     ], shape: diamond),
-    edge("d,r,u,l", "-|>", [Yes], label-pos: 0.1)
+    edge("d,r,u,l", [Yes], label-pos: 0.1)
   ),
   diagram($
-    e^- edge("rd", "-<|-") & & & edge("ld", "-|>-") e^+ \
+    e^- edge("rd", marks: "-<|-") & & & edge("ld") e^+ \
     & edge(gamma, "wave") \
-    e^+ edge("ru", "-|>-") & & & edge("lu", "-<|-") e^- \
+    e^+ edge("ru", marks: "-|>-") & & & edge("lu") e^- \
   $)
 ))
 
@@ -288,8 +287,6 @@ Typst 中的 cetz 就像 LaTeX 中的 tikz 一样，提供强大的画图功能�
 
 内置表情(built-in emoji namespace): `#emoji.rocket` #emoji.rocket
 
-GitHub表情(github-named emojis): `#github.blue_car` #github.blue_car
-
 由 #link("https://fontawesome.com/download")[Font awesome] 提供的图标（需要下载字体）：#fa-github()，具体有哪些可查 #link("https://fontawesome.com/search?o=r&m=free")[Font awesome gallery]。
 
 === boxes(admonitions & thms)
@@ -301,7 +298,7 @@ GitHub表情(github-named emojis): `#github.blue_car` #github.blue_car
 
 #theorem(title: [#text(fill: green, "This is a title")])[Now the counter increases by 1 for type `Theorem`.] <thm2>
 
-#theorem(footer: [The showybox allowes you add footer for boxes, useful when giving some explanation.])[#lorem(20)] <thm1>
+#theorem(footer: [The showybox allowes you add footer for boxes, useful when giving some explanation.])[#lorem(10)] <thm1>
 
 #definition[The counter will be reset after the first level of heading changes, i.e. counting within one chapter(can be changed)).]
 
@@ -314,34 +311,22 @@ GitHub表情(github-named emojis): `#github.blue_car` #github.blue_car
 #example()[By default the `example` will not count itself.]
 
 #noindent[
-@thm1 (Use the label name to refer)\
-@thm2
+  @thm1, @thm2
 ]
 
 === 伪代码（算法）
 lovelace包，可以用来写伪代码，body 最好用 typ，比如：
 
-#algo(
-  caption: [caption for algorithm],
-  ```typ
-  #no-number
-  *input:* integers $a$ and $b$
-  #no-number
-  *output:* greatest common divisor of $a$ and $b$
-  <line:loop-start>
-  *if* $a == b$ *goto* @line:loop-end
-  *if* $a > b$ *then*
-    $a <- a - b$ #comment[and a comment]
-  *else*
-    $b <- b - a$ #comment[and another comment]
-  *end*
-  *goto* @line:loop-start
-  <line:loop-end>
-  *return* $a$
-  ```
-)
-
-当然内部的引用不是必须的，这里只是展示它的功能。
+#algo(title: [caption for algorithm])[
+  - *input:* integers $a$ and $b$
+  - *output:* greatest common divisor of $a$ and $b$
+  + *if* $a > b$ *then*
+    + $a <- a - b$ #comment[and a comment]
+  + *else*
+    + $b <- b - a$ #comment[and another comment]
+  + *end*
+  + *return* $a$
+]
 
 === wrap_content
 文字图片包裹，不用自己考虑分栏了。在大多数时候是比较有效的，但有的时候不是很好看，可能还是得自己手动 grid。
@@ -364,7 +349,7 @@ lovelace包，可以用来写伪代码，body 最好用 typ，比如：
 
 === 真值表
 
-快速制作真值表，只支持 $not and or xor => <=>$。
+快速制作真值表，只支持 $not and or xor => <=>$，新版还支持卡诺图画法？
 #truth-tbl(caption: "真值表", $A and B$, $B or A$, $A => B$, $(A => B) <=> A$, $ A xor B$)
 
 #tab 更复杂的用法（自己填data），三个参数分别是样式函数、表头、表内容：
@@ -376,8 +361,32 @@ lovelace包，可以用来写伪代码，body 最好用 typ，比如：
 )
 
 === todo(checklist)
-- [ ] 加入更多layouts，比如前言、附录
-- [x] 重构代码，使得可以根据语言切换文档类型
+#grid(
+  columns: 2,
+  column-gutter: 8pt,
+  [
+    - [ ] 加入更多layouts，比如前言、附录
+    - [x] 重构代码，使得可以根据语言切换文档类型
+    - [-] Jupiter
+    - [/] Saturn
+    - [>] Forwarded
+    - [<] Scheduling
+    - [?] question
+    - [!] important
+    - [\*] star
+  ],
+  [
+    - [b] bookmark
+    - [I] idea
+    - [p] pros
+    - [c] cons
+    - [f] fire
+    - [k] key
+    - [w] win
+    - [u] up
+    - [d] down
+  ]
+)
 
 === Pinit
 #warning()[You should add a blank line before the `#pinit-xxx` function call, otherwise it will cause misalignment.]
@@ -401,7 +410,7 @@ $ (#pin(1)q_T^* p_T#pin(2))/(p_E#pin(3))#pin(4)p_E^*#pin(5) >= (c + q_T^* p_T^*)
 
 #v(4em)
 
-这玩意儿的用法略灵活，可以看它的仓库 #link("https://github.com/typst/packages/tree/main/packages/preview/pinit/0.1.4")[pinit]
+这玩意儿的用法略灵活，可以看它的仓库 #link("https://github.com/typst/packages/tree/main/packages/preview/pinit/0.2.0")[pinit]
 
 === mitex
 使用 #link("https://github.com/typst/packages/tree/main/packages/preview/mitex/0.2.4")[mitex] 包渲染 LaTeX 数学环境，比如：

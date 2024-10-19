@@ -1,9 +1,9 @@
 #import "@preview/i-figured:0.2.4"
-#import "@preview/fletcher:0.4.4" as fletcher: diagram, node, edge
+#import "@preview/fletcher:0.5.1" as fletcher: diagram, node, edge
 #import "@preview/tablem:0.1.0": tablem
-#import "@preview/lovelace:0.2.0": algorithm, pseudocode-raw, setup-lovelace
-#import "@preview/truthfy:0.3.0": truth-table, truth-table-empty
-#import "@preview/codly:0.2.0": *
+#import "@preview/lovelace:0.3.0": pseudocode-list, pseudocode, line-label
+#import "@preview/truthfy:0.4.0": truth-table, truth-table-empty
+#import "@preview/codly:1.0.0": *
 
 // 通过这三个函数可以手动控制 i-figured 的计数器
 #let reset_i-figure_image(num) = counter(figure.where(kind: i-figured._prefix + repr(image))).update(num)
@@ -96,20 +96,31 @@
 )
 
 // 算法框，使用 lovelace 实现
-#let algo(caption: "", body) = {
-  // 去除当以 "[]" 形式传参时 body 中的 "[]"，方法比较笨，轻喷
-  if "text" not in body.fields() {
-    body = body.children
-    body = body.at(1)
-  }
-  algorithm(
-    caption: caption,
-    pseudocode-raw(
-      indentation-guide-stroke: .4pt + aqua,
+#let my-lovelace-defaults = (
+  line-numbering: "1",
+  booktabs: true,
+  // stroke: none,
+  hooks: 0.5em,
+  indentation: 1em,
+  booktabs-stroke: 2pt + black,
+)
+#let pseudocode-list = pseudocode-list.with(..my-lovelace-defaults)
+#let algo(title: none, body) = {
+  figure(
+    kind: "algorithm",
+    supplement: [Algorithm],
+    pseudocode-list(
+      booktabs: true,
+      numbered-title: title + h(1fr),
       body
     )
   )
 }
+#let comment(body) = {
+  h(1fr)
+  text(size: .85em, fill: gray, sym.triangle.stroked.r + sym.space + body)
+}
+#let no-number = [- #hide([])] // empty line and no number
 
 // 代码块，使用 codly + i-figure 实现
 #let code(caption: "", body) = figure(
