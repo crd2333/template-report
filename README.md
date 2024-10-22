@@ -7,7 +7,6 @@
 ## 声明
 - 本模板是在 [浙江工业大学实验报告模板](https://github.com/zjutjh/zjut-report-typst) 和 [南京大学学位论文模板](https://github.com/nju-lug/nju-thesis-typst) 的基础上修改而来的。
 - 使用了自己编写的基于 showybox 的 [admonitions](https://github.com/crd2333/typst-admonition)、[theorems boxes](https://github.com/crd2333/typst-theorem-box)。
-- ~~并且使用到了 [typst-svg-emoji](https://github.com/polazarus/typst-svg-emoji) 这个不收录在官方 preview 的包（否则 emoji 无颜色，似乎官方已在处理，届时可删除）。~~ 已删除
 
 ## 特点(feature)
 - 根据个人使用习惯，对封面页设置了"report"和"normal"类型，并支持匿名实验报告，支持无封面的简单作业；
@@ -16,10 +15,10 @@
 - 整合了一些方便实用的第三方包在内，便于使用。
   - 优化（添加）功能包括：图、表、代码、伪代码、公式、admonitions、theorems、todo、emoji、树形图、流程图、LaTeX公式支持等。
 - 通过更改校徽和校名并调整大小，你也可以很方便地将其改为你的学校。
-- 具体使用方法，可以参考 `example.typ`。
-    ![](example/example.png)
+- 具体使用方法，可以参考 `template/main.typ`。
+    ![](template/main.png)
 
-- Change logs
+## Change logs
 1. 2024.2.1：Initial commit
 2. 2024.2.1：Add README and first publish
 3. 2024.2.27：根据不同课程报告添加不同report类型并略微调整代码
@@ -37,3 +36,4 @@
 15. 2024.5.13：删除 xarrow 包，添加 fletcher 包，同时修改一些细节，添加页眉与页脚的种类
 16. 2024.7.2：添加 indenta, pinit, mitex. 重构部分代码，重构 thms 包
 17. 2024.10.19：更新到 typst 0.12.0，更新相关第三方包
+18. 2024.10.22：删除 i-figured（自己做更简洁的实现），添加 timeliney 包

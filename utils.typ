@@ -17,7 +17,7 @@
 #import "@preview/oxifmt:0.2.1": strfmt
 
 // 假段落，deprecated
-#let fake_par = context{box();v(-measure(block()+block()).height)}
+#let fake_par = context{let b=par(box()); b; v(-measure(b+b).height)}
 
 // 中文缩进
 #let indent = h(2em)

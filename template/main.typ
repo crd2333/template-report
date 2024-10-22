@@ -58,15 +58,13 @@ _斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体（事实上
 采用连接符换行。
 #hline()
 
-#indent 另外，通过 `#indent`（或`#tab`）能缩进内容，比如在图表之后，需要手动缩进。其实也可以自动缩进，只是个人认为，图表后是否缩进还是由作者手动控制比较好。
+#indent 另外，通过 `#indent`（或 `#tab`）能缩进内容，在 indenta 失效时可以使用。
 
 == 图表测试
-引用图表时，表格、图片和代码分别需要加上 `tbl:`、`fig:` 和 `lst:` 前缀。至于缩进问题前已述。
-
 === 图片
 #fig(caption: "测试图片, 浙江大学", "../assets/校名.jpg") <test>
 
-图片测试引用 @fig:test
+图片测试引用 @test
 
 === 公式
 Given an $N times N$ integer matrix $(a_(i j))_(N times N)$, find the maximum value of $sum_(i=k)^m sum_(j=l)^n a_(i j)$ for all $1 <= k <= m <= N$ and $1 <= l <= n <= N$.
@@ -74,7 +72,7 @@ Given an $N times N$ integer matrix $(a_(i j))_(N times N)$, find the maximum va
 $ F_n = floor(1 / sqrt(5) phi.alt^n) $ <fib>
 $ F_n = floor(1 / sqrt(5) phi.alt^n) $ <->
 
-引用公式Fibonacci: @eqt:fib，使用 `eqt:` 前缀来引用公式。标签改为`<->`后不再有编号，但也不能引用了。
+引用公式Fibonacci: @fib。添加 `<->` 后不再有编号和计数，但也不能引用了。
 
 为了更加简化符号输入，有这么一个包 #link("https://github.com/typst/packages/tree/main/packages/preview/quick-maths/0.1.0")[quick-maths]，定义一些快捷方式，比如：
 
@@ -91,7 +89,7 @@ $ A or B |- A $
 $ x <= y $
 
 === 代码
-code使用codly实现，会自动捕捉所有成块原始文本，像下面这样，无需调用code命令（调用code命令则是套一层 figure，加上 caption）。
+code使用codly实现，会自动捕捉所有成块原始文本，像下面这样，不一定非要调用code命令（调用code命令则是套一层 figure，加上 caption）。
 
 #no-codly[
   ```raw
@@ -102,7 +100,7 @@ code使用codly实现，会自动捕捉所有成块原始文本，像下面这�
 enabled code
 ```
 
-代码块经过特殊处理，注释内的斜体、粗体、数学公式会启用 eval
+#strike[代码块经过特殊处理，注释内的斜体、粗体、数学公式会启用 eval]。感觉经常遇到 bug，先禁用了（`lib.typ` 中 ```typ // show raw: comment_process```）
 ```cpp
 cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
 ```
@@ -118,7 +116,7 @@ cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
   ```
 ] <code>
 
-#indent 引用代码 @lst:code
+引用 @code
 
 === 表格
 表格通过原生 table 封装到 figure 中，并添加自动数学环境参数：```typ automath: true```，通过正则表达式检测数字并用 `$` 包裹。
@@ -159,7 +157,7 @@ cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
   ) <timing-tlt>
 ]))
 
-引用@tbl:timing，引用@tbl:timing-tlt。
+引用@timing，引用@timing-tlt。
 
 由于习惯了 markdown 的表格，所以 typst 的表格语法可能不太习惯（其实强大很多），但是也有类 markdown 表格 package 的实现：
 #tblm(caption: "tablem 实现的类 markdown 表格")[
@@ -181,7 +179,7 @@ cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
 = Chapter 2 <caption_2>
 #fig("../assets/校名.jpg", caption: "测试图片, 浙江大学", width: 50%) <test2>
 
-图片测试引用@fig:test2，可以看到现在的编号是 2 开头。
+图片测试引用 @test2，可以看到现在的编号是 2 开头。
 
 == 列表
 Bubble list 语法（更改了图标，使其更类似 markdown，且更大）和 enum 语法：
@@ -282,6 +280,39 @@ Typst 中的 cetz 就像 LaTeX 中的 tikz 一样，提供强大的画图功能�
     - 3.1.1
 ]
 
+=== timeline
+#timeline(show-grid: true, caption: "Timeline",
+  {
+  headerline(group(([*2023*], 4)), group(([*2024*], 4)))
+  headerline(
+    group(..range(4).map(n => strong("Q" + str(n + 1)))),
+    group(..range(4).map(n => strong("Q" + str(n + 1)))),
+  )
+
+  taskgroup(title: [*Research*], {
+    task("Research the market", (0, 2), style: (stroke: 2pt + gray))
+    task("Conduct user surveys", (1, 3), style: (stroke: 2pt + gray))
+  })
+
+  milestone(
+    at: 3.75,
+    style: (stroke: (dash: "dashed")),
+    align(center, [
+      *Conference demo*\
+      Dec 2023
+    ])
+  )
+
+  milestone(
+    at: 6.5,
+    style: (stroke: (dash: "dashed")),
+    align(center, [
+      *App store launch*\
+      Aug 2024
+    ])
+  )
+})
+
 === emojis
 直接使用(directly): 😆🛖🐡
 
@@ -292,7 +323,7 @@ Typst 中的 cetz 就像 LaTeX 中的 tikz 一样，提供强大的画图功能�
 === boxes(admonitions & thms)
 下面是我自己写的基于 showybox 的 admonitions 块和定理块。
 #note()[我自己写的admonition块]
-#info(caption: "标题与字号可以自定义", caption_size: 16pt, size: 9pt)[图标、内容字号也可以传入修改]
+#info(caption: "标题与字号可以自定义", caption_size: 18pt, size: 9pt)[图标、内容字号也可以传入修改]
 
 #tab 好康且自动计数的定理块：
 
@@ -327,6 +358,8 @@ lovelace包，可以用来写伪代码，body 最好用 typ，比如：
   + *end*
   + *return* $a$
 ]
+
+算法默认情况下不启用每一章节的计数清空功能，如有需要可以自己实现。
 
 === wrap_content
 文字图片包裹，不用自己考虑分栏了。在大多数时候是比较有效的，但有的时候不是很好看，可能还是得自己手动 grid。
@@ -391,7 +424,7 @@ lovelace包，可以用来写伪代码，body 最好用 typ，比如：
 === Pinit
 #warning()[You should add a blank line before the `#pinit-xxx` function call, otherwise it will cause misalignment.]
 
-#v(2em)
+#v(1.5em)
 
 $ (#pin(1)q_T^* p_T#pin(2))/(p_E#pin(3))#pin(4)p_E^*#pin(5) >= (c + q_T^* p_T^*)(1+r^*)^(2N) $
 
@@ -428,9 +461,9 @@ $ (#pin(1)q_T^* p_T#pin(2))/(p_E#pin(3))#pin(4)p_E^*#pin(5) >= (c + q_T^* p_T^*)
     #set math.equation(numbering: "(1)", supplement: "equation")
   \fi
 
-  A \textbf{strong} text, a \emph{emph} text and inline equation $x + y$.
+  A \textbf{strong} text, a \emph{emph} text and inline equation $x + y$. And here we set the equation numbering to be like (1), (2), ...
 
-  Also block \eqref{eq:pythagoras}.
+  Block equation \eqref{eq:pythagoras}.
 
   \begin{equation}
     a^2 + b^2 = c^2 \label{eq:pythagoras}

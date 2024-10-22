@@ -30,7 +30,7 @@
       image(icon, fit: "contain", width: caption_size)
     }
   ) + " " + box(height: caption_size * 0.8,
-    text(size: caption_size, ligatures: false, caption)
+    text(size: caption_size * 0.8, ligatures: false, caption)
   )
   let body = showybox(
     frame: (

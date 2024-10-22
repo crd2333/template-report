@@ -1,18 +1,44 @@
-#import "@preview/i-figured:0.2.4"
 #import "@preview/fletcher:0.5.1" as fletcher: diagram, node, edge
 #import "@preview/tablem:0.1.0": tablem
 #import "@preview/lovelace:0.3.0": pseudocode-list, pseudocode, line-label
 #import "@preview/truthfy:0.4.0": truth-table, truth-table-empty
 #import "@preview/codly:1.0.0": *
+#import "@preview/timeliney:0.1.0": timeline as timeliney, headerline, group, taskgroup, task, milestone
 
-// 通过这三个函数可以手动控制 i-figured 的计数器
-#let reset_i-figure_image(num) = counter(figure.where(kind: i-figured._prefix + repr(image))).update(num)
-#let reset_i-figure_table(num) = counter(figure.where(kind: i-figured._prefix + repr(table))).update(num)
-#let reset_i-figure_raw(num) = counter(figure.where(kind: i-figured._prefix + repr(row))).update(num)
+// 简单取代 i-figured
+#let process_figure_and_equation(unnumbered-label: "-", body) = {
+  show heading.where(level:1):it => { // reset counters when new chapter starts
+    counter(figure.where(kind: image)).update(0)
+    counter(figure.where(kind: table)).update(0)
+    counter(figure.where(kind: raw)).update(0)
+    counter(math.equation).update(0)
+    it
+  }
+  // show styles: `1-1` for image, code, table, and `(1-1)` for math
+  show figure.where(kind: image): set figure(numbering: _ => [#counter(heading.where(level: 1)).display("1")-#counter(figure.where(kind: image)).display("1")])
+  show figure.where(kind: table): set figure(numbering: _ => [#counter(heading.where(level: 1)).display("1")-#counter(figure.where(kind: table)).display("1")])
+  show figure.where(kind: raw): set figure(numbering: _ => [#counter(heading.where(level: 1)).display("1")-#counter(figure.where(kind: raw)).display("1")])
+  set math.equation(numbering: _ => [(#counter(heading.where(level: 1)).display("1")-#counter(math.equation).display("1"))])
+  show math.equation.where(block: true): it => {
+    if (it.has("label") and str(it.label) == unnumbered-label) {
+      counter(math.equation).update(i => i - 1)
+      math.equation(it.body) // unnumbered equation, and won't be counted, e.g. $ x + y $<->
+    } else {it}
+  }
+  body
+}
 
 // 插入图片
 #let fig(caption: "", ..args) = figure(
   image(..args),
+  caption: caption,
+)
+
+#let timeline(
+  caption: "",
+  ..args,
+  body) = figure(
+  timeliney(..args, body),
   caption: caption,
 )
 
