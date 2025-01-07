@@ -7,26 +7,96 @@
 // 树、图文包裹、图标、真值表
 #import "@preview/syntree:0.2.0": syntree, tree
 #import "@preview/treet:0.1.1": tree-list
-#import "@preview/wrap-it:0.1.0": wrap-content, wrap-top-bottom
-#import "@preview/fontawesome:0.4.0": *
-#import "@preview/cheq:0.2.0": checklist
-#import "@preview/pinit:0.2.0": *
+#import "@preview/wrap-it:0.1.1": wrap-content, wrap-top-bottom
+#import "@preview/fontawesome:0.5.0": *
+#import "@preview/cheq:0.2.2": checklist
+#import "@preview/pinit:0.2.2": *
 #import "@preview/indenta:0.0.3": fix-indent
 #import "@preview/numbly:0.1.0": numbly
-#import "@preview/drafting:0.2.0": *
 #import "@preview/oxifmt:0.2.1": strfmt
+#import "@preview/drafting:0.2.1": *
 
 // 假段落，deprecated
 #let fake_par = context{let b=par(box()); b; v(-measure(b+b).height)}
 
 // 中文缩进
 #let indent = h(2em)
+#let unindent = h(-2em)
 #let noindent(body) = {
   set par(first-line-indent: 0em)
   body
 }
-#let tab = indent // alias
-#let notab = noindent // alias
+#let tab = indent     // alias
+#let untab = unindent
+#let notab = noindent
+
+// list, enum 的修复，来自 @OrangeX4(https://github.com/OrangeX4) 的解决方案
+// 解决编号与基线不对齐的问题，同时也恢复了 block width 和 list, enum 的间隔问题
+// Align the list marker with the baseline of the first line of the list item.
+#let align-list-marker-with-baseline(body) = {
+  show list.item: it => {
+    let current-marker = {
+      set text(fill: text.fill)
+      if type(list.marker) == array {
+        list.marker.at(0)
+      } else {
+        list.marker
+      }
+    }
+    context {
+      let hanging-indent = measure(current-marker).width + .6em + .3pt
+      set terms(hanging-indent: hanging-indent)
+      if type(list.marker) == array {
+        terms.item(
+          current-marker,
+          {
+            // set the value of list.marker in a loop
+            set list(marker: list.marker.slice(1) + (list.marker.at(0),))
+            it.body
+          },
+        )
+      } else {
+        terms.item(current-marker, it.body)
+      }
+    }
+  }
+  body
+}
+// Align the enum marker with the baseline of the first line of the enum item. It will only work when the enum item has a number like `1.`.
+#let align-enum-marker-with-baseline(body) = {
+  show enum.item: it => {
+    if not it.has("number") or it.number == none or enum.full == true {
+      // If the enum item does not have a number, or the number is none, or the enum is full
+      return it
+    }
+    let weight-map = (
+      thin: 100,
+      extralight: 200,
+      light: 300,
+      regular: 400,
+      medium: 500,
+      semibold: 600,
+      bold: 700,
+      extrabold: 800,
+      black: 900,
+    )
+    let current-marker = {
+      set text(
+        fill: text.fill,
+        weight: if type(text.weight) == int {
+          text.weight - 300
+        } else {
+          weight-map.at(text.weight) - 300
+        },
+      )
+      numbering(enum.numbering, it.number) + h(-.1em)
+    }
+    let hanging-indent = measure(current-marker).width + .6em + .3pt
+    set terms(hanging-indent: hanging-indent)
+    terms.item(current-marker, it.body)
+  }
+  body
+}
 
 // 封装 tree-list，使其无缩进、视为整体且支持根节点；选用这个字体使线段连续
 #let tree-list = (root: "", breakable: false, body) => {
@@ -102,17 +172,19 @@
 }
 
 // 快捷 grid
-#let grid2(body1, body2) = grid(
+#let grid2(alignment: center, body1, body2, ..args) = align(alignment, grid(
   columns: 2,
   grid.cell(align: center+horizon)[#body1],
-  grid.cell(align: center+horizon)[#body2]
-)
-#let grid3(body1, body2, body3) = grid(
+  grid.cell(align: center+horizon)[#body2],
+  ..args
+))
+#let grid3(alignment: center, body1, body2, body3, ..args) = align(alignment, grid(
   columns: 3,
   grid.cell(align: center+horizon)[#body1],
   grid.cell(align: center+horizon)[#body2],
-  grid.cell(align: center+horizon)[#body3]
-)
+  grid.cell(align: center+horizon)[#body3],
+  ..args
+))
 
 // 快捷文字着色，实现了红色蓝色，黑色则为粗体，两个 * 即可
 #let redt(body) = text(fill: colors.red, body) // red-text
@@ -135,33 +207,74 @@
   )
 }
 
-// 对各种语言的注释启用 eval，使得可以在注释中使用斜体、粗体和数学公式等
-#let comment_process = it => {
-  let slash_lang = ("c", "c++", "cpp", "Cpp", "typ", "typc", "rust", "rs", "js", "javascript", "ts", "typescript")
-  let comment-style = if it.lang in slash_lang or it.lang == none {"//"} else {"#"}
-  show raw.line: it => {
-    let body = it.body
-    let comment-token = if "children" in it.body.fields() {
-      it.body.children.position(it => {
-        if "child" in it.fields() {
-          it.child.text.starts-with(comment-style)
-        } else {
-          it.text.starts-with(comment-style)
-        }
-      })
+// align center math.equation and figure(image, table) in list and enum
+#let align_list_enum(doc) = {
+  show list: it => {
+    show math.equation.where(block: true): eq => {
+      block(width: 100%, inset: 0pt, align(center, eq))
     }
-    if comment-token == none {return it}
-    it.body.children.slice(0, comment-token).join()
-    let matched = it.text.match(regex(comment-style + "[\s\S]*")).text
-    let comment = matched.match(regex("^" + comment-style + "+")) // ^//+ or ^#+
-    let comment_len = if comment != none {comment.end} else {0}
-    let e = matched.slice(comment_len).trim(at: start)
-    let comment-style = if comment-style == "//" {"/"} else {comment-style}
-    text(fill: gray.darken(15%), comment-style * comment_len)
-    matched.slice(comment_len, matched.len() - e.len())
-    // change * to be \*, other wise pointers in Cpp will be regarded as bold symbol, the same reason for "<" and ">"
-    let e = e.replace("*", "\*").replace("<", "\<").replace(">", "\>")
-    text(fill: gray.darken(15%), eval(e, mode: "markup"))
+    show figure.where(kind: "image"): it => {
+      block(width: 100%, inset: 0pt, align(center, it))
+    }
+    show figure.where(kind: "table"): it => {
+      block(width: 100%, inset: 0pt, align(center, it))
+    }
+    it
   }
-  it
+  show enum: it => {
+    show math.equation.where(block: true): eq => {
+      block(width: 100%, inset: 0pt, align(center, eq))
+    }
+    show figure.where(kind: "image"): it => {
+      block(width: 100%, inset: 0pt, align(center, it))
+    }
+    show figure.where(kind: "table"): it => {
+      block(width: 100%, inset: 0pt, align(center, it))
+    }
+    it
+  }
+  doc
+}
+
+// 对各种语言的注释启用 eval，使得可以在注释中使用斜体、粗体和数学公式等
+#let comment_eval(doc) = {
+  show raw: it => {
+    let slash_lang = ("c", "c++", "cpp", "Cpp", "typ", "typc", "rust", "rs", "js", "javascript", "ts", "typescript")
+    let comment-style = if it.lang in slash_lang or it.lang == none {"//"} else {"#"}
+    show raw.line: it => {
+      let body = it.body
+      let comment-token = if "children" in it.body.fields() {
+        it.body.children.position(it => {
+          if "child" in it.fields() {
+            it.child.text.starts-with(comment-style)
+          } else {
+            it.text.starts-with(comment-style)
+          }
+        })
+      }
+      if comment-token == none {return it}
+      it.body.children.slice(0, comment-token).join()
+      let matched = it.text.match(regex(comment-style + "[\s\S]*")).text
+      let comment = matched.match(regex("^" + comment-style + "+")) // ^//+ or ^#+
+      let comment_len = if comment != none {comment.end} else {0}
+      let e = matched.slice(comment_len).trim(at: start)
+      let comment-style = if comment-style == "//" {"/"} else {comment-style}
+      text(fill: gray.darken(15%), comment-style * comment_len)
+      matched.slice(comment_len, matched.len() - e.len())
+      // change * to be \*, other wise pointers in Cpp will be regarded as bold symbol, the same reason for "<" and ">"
+      let e = e.replace("*", "\*").replace("<", "\<").replace(">", "\>")
+      text(fill: gray.darken(15%), eval(e, mode: "markup"))
+    }
+    it
+  }
+  doc
+}
+
+// 更改注释颜色（如果需要打印等用途，灰色可能难以辨认）
+#let comment_color(color: green, doc) = {
+  show raw: body => {
+    show text: it => if text.fill == rgb("#8A8A8A") { text(fill: color, it) } else { it }
+    body
+  }
+  doc
 }

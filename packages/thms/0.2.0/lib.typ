@@ -1,6 +1,6 @@
 // implement the thms by showybox based on [ctheorem](https://github.com/sahasatvik/typst-theorems/)
 
-#import "@preview/showybox:2.0.1": showybox
+#import "@preview/showybox:2.0.3": showybox
 
 #let thmcounters = state("thm",
   (

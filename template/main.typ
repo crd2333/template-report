@@ -3,9 +3,9 @@
 #show: project.with(
   title: "Test Title",
   title_2: "Project 1",
-  author: ("crd233", "张三"),
-  date: (2024, 2, 30),
-  cover_style: "report",   // report, report1, report2, report3 或其它，false 或 "" 表示无封面
+  authors: ("crd233", "张三"),
+  date: (2024, 2, 30), // 默认自动获取 datetime.today()
+  cover_style: "report5",   // report, report1, report2, report3, report4, report5... false 或 "" 表示无封面
   header: "type1", // true or "type1" 使用默认页眉，"type2" 为一个略详细一点的页眉
   footer: "type1",
   show_toc: true,
@@ -62,7 +62,7 @@ _斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体（事实上
 
 == 图表测试
 === 图片
-#fig(caption: "测试图片, 浙江大学", "../assets/校名.jpg") <test>
+#fig(caption: "测试图片, 浙江大学", "../assets/校名.jpg", width: 50%) <test>
 
 图片测试引用 @test
 
@@ -100,7 +100,8 @@ code使用codly实现，会自动捕捉所有成块原始文本，像下面这�
 enabled code
 ```
 
-#strike[代码块经过特殊处理，注释内的斜体、粗体、数学公式会启用 eval]。感觉经常遇到 bug，先禁用了（`lib.typ` 中 ```typ // show raw: comment_process```）
+#strike[代码块经过特殊处理，注释内的斜体、粗体、数学公式会启用 eval]。感觉经常遇到 bug，先禁用了（`lib.typ` 中 ```typ // show: comment_eval```）。另外可以改变注释颜色 ```typ show: comment_color.with(color: green)```（如果需要打印等用途，灰色可能难以辨认）
+#show: comment_color.with(color: green.darken(50%))
 ```cpp
 cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
 ```
@@ -469,6 +470,17 @@ $ (#pin(1)q_T^* p_T#pin(2))/(p_E#pin(3))#pin(4)p_E^*#pin(5) >= (c + q_T^* p_T^*)
     a^2 + b^2 = c^2 \label{eq:pythagoras}
   \end{equation}
 `)
+
+=== drafting
+// #set page(margin: (x: 4cm))
+// #set-page-properties(margin-left: 4cm, margin-right: 4cm)
+#set-page-properties(margin-left: 2cm, margin-right: 2cm)
+#lorem(20)
+#margin-note(side: left)[Hello, world!]
+#lorem(10)
+#margin-note[Hello from the other side]
+#lorem(25)
+
 
 #pagebreak()
 #bibliography("../assets/exbib.bib", style: "ieee", title: "References")

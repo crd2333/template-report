@@ -13,7 +13,7 @@
   version: 0.3
   Nearly rewrite the code the implement admonitions by showybox, making it more flexible.
 */
-#import "@preview/showybox:2.0.1": showybox
+#import "@preview/showybox:2.0.3": showybox
 
 #let iconbox(
   icon: emoji.info,    // a symbol or an image

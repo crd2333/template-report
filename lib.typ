@@ -8,8 +8,8 @@
   title: "Title1",
   title_2: "Title2",
   title_3: "Title3",
-  author: ("author1", "author2"),
-  date: (2023, 5, 14),
+  authors: ("authors1", "authors2"),
+  date: datetime.today(),
   cover_style: "normal",
   class: "your class",
   major: "your major",
@@ -27,12 +27,13 @@
   body
 ) = {
   // 信息处理和打包
-  if type(author) == "array" {author = author.join(", ")} // 多作者（array）时，分隔为字符串
+  if type(authors) == "array" {authors = authors.join(", ")} // 多作者（array）时，分隔为字符串
+  if type(date) == "datetime" {date = (date.year(), date.month(), date.day())} // 日期处理为 array
   let infos = (
     title: title,
     title_2: title_2,
     title_3: title_3,
-    author: author,
+    authors: authors,
     date: date,
     class: class,
     major: major,
@@ -67,7 +68,7 @@
     set text(10pt)
     "Page " + counter(page).display("1 of 1", both: true)
   }
-  set document(title: title, author: author)
+  set document(title: title, author: authors)
   set page(
     paper: "a4",
     numbering: "1",
@@ -83,12 +84,11 @@
       else {none},
   )
 
-  set-page-properties() // drafting
-
-  // 导入 show 规则
+  // 导入规则
+  set-page-properties(margin-left: 2cm) // drafting, set to same as page's margin x
   show: process_figure_and_equation.with(unnumbered-label: "-")
   show: checklist.with(fill: luma(95%), stroke: blue, radius: .2em)
-  show: thmrules  // 导入 theorem 环境
+  show: thmrules.with(qed-symbol: $square$)  // 导入 theorem 环境
   show: shorthand // 导入 math shorthand
   show: codly-init.with()
   // 行内公式与文字之间的自动空格
@@ -101,10 +101,17 @@
   show link: set text(colors.blue)
   // 设置字体与语言
   set text(font: 字体.宋体, size: 字号.小四, lang: lang)
-  set par(first-line-indent: 2em)
-  set list(marker: ([●], [○], [■], [□], [►])) // 设置 bullet list 的 marker，相比默认更像 markdown，另外刻意调大了一点（适合老年人
-  set enum(numbering: numbly("{1}.", "{2:a}.", "{3:i}."), full: true)
   show emph: text.with(font: 字体.楷体) // 中文斜体显示为楷体
+  set par(first-line-indent: 2em)
+  // 设置 bullet list 和 enum 的 marker，相比默认更像 markdown，另外刻意调大了一点（适合老年人
+  set list(marker: ([●], [○], [■], [□], [►]), tight: false, spacing: .8em)
+  set enum(numbering: numbly("{1}.", "{2:a}.", "{3:i}."), full: true, tight: false, spacing: .8em)
+  // 将 list and enum 用 block 撑开 (for math.equation and figures)
+  show: align_list_enum
+  // show: align-list-marker-with-baseline
+  // show: align-enum-marker-with-baseline
+  // 设置 figure (for long table or code) breakable
+  show figure: set block(breakable: true)
 
   // 设置标题
   show heading.where(level: 1): it => {
@@ -118,6 +125,7 @@
   set heading(numbering: (..nums) => { // 设置标题编号
     nums.pos().map(str).join(".") + " "
   })
+  show heading: it => it + v(6pt)
 
   // 代码相关设置
   codly(
@@ -152,12 +160,13 @@
   // 行内代码与文字之间的自动空格
   show raw.where(block: false): it => h(0.25em, weak: true) + it + h(0.25em, weak: true)
   show raw: set text(font: (字体.meslo-mono, 字体.思源宋体)) // 代码中文字体
+  show raw.where(block: true): set text(size: 字号.小四 - 3pt)  // 代码块字体小一点
   show raw: it => {
     show regex("pin\d"): it => pin(eval(it.text.slice(3))) // pinit package for raw
     it
   }
-  // show raw: comment_process // maybe bugs
-  set raw(syntaxes: "assets/Assembly.sublime-syntax") // 汇编代码的语法高亮
+  // show raw: comment_eval // maybe bugs
+  // show: comment_color.with(color: green)
 
   show: fix-indent() // 一个很 tricky 的包，需放在所有 show 规则的最后
 

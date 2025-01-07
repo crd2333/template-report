@@ -63,7 +63,7 @@ This report is embedded in the ArtosFlow project. ArtosFlow is a project of the 
 \
 \
 *showybox: 为 Typst 创建丰富多彩且可自定义的框*
-#import "@preview/showybox:2.0.1": showybox
+#import "@preview/showybox:2.0.3": showybox
 #showybox([Hello world!])
 #showybox(
   frame: (

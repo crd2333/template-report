@@ -1,8 +1,8 @@
-#import "@preview/fletcher:0.5.1" as fletcher: diagram, node, edge
+#import "@preview/fletcher:0.5.3" as fletcher: diagram, node, edge
 #import "@preview/tablem:0.1.0": tablem
 #import "@preview/lovelace:0.3.0": pseudocode-list, pseudocode, line-label
-#import "@preview/truthfy:0.4.0": truth-table, truth-table-empty
-#import "@preview/codly:1.0.0": *
+#import "@preview/truthfy:0.5.0": truth-table, truth-table-empty
+#import "@preview/codly:1.1.1": *
 #import "@preview/timeliney:0.1.0": timeline as timeliney, headerline, group, taskgroup, task, milestone
 
 // 简单取代 i-figured
@@ -22,24 +22,31 @@
   show math.equation.where(block: true): it => {
     if (it.has("label") and str(it.label) == unnumbered-label) {
       counter(math.equation).update(i => i - 1)
-      math.equation(it.body) // unnumbered equation, and won't be counted, e.g. $ x + y $<->
-    } else {it}
+      math.equation(numbering: none, block: true, number-align: end+horizon, it.body) // unnumbered equation, and won't be counted, e.g. $ x + y $<->
+    } else {
+      it
+    }
   }
   body
 }
 
 // 插入图片
 #let fig(caption: "", ..args) = figure(
-  image(..args),
+  kind: image,
   caption: caption,
+  image(..args)
+)
+#let fign(..args) = figure(
+  kind: image,
+  supplement: none, // no caption and supplement
+  caption: none,
+  image(..args)
 )
 
-#let timeline(
-  caption: "",
-  ..args,
-  body) = figure(
-  timeliney(..args, body),
+#let timeline(caption: "", ..args, body) = figure(
+  kind: image,
   caption: caption,
+  timeliney(..args, body)
 )
 
 // 正则捕捉自动设置数学环境，对表格等使用
@@ -50,11 +57,12 @@
 // 普通表，包含居中
 #let tbl(caption: "", alignment: center + horizon, automath: false, ..args) = {
   let fig = figure(
+    kind: table,
+    caption: caption,
     table(
       align: alignment,
       ..args,
-    ),
-    caption: caption,
+    )
   )
   if automath {
     show table.cell: automath_rule
@@ -64,6 +72,8 @@
 // 三线表，包含居中
 #let tlt(caption: "", alignment: center + horizon, automath: false, ..args) = {
   let fig = figure(
+    kind: table,
+    caption: caption,
     table(
       stroke: none,
       align: alignment,
@@ -71,8 +81,7 @@
       table.hline(y: 1),
       ..args,
       table.hline(),
-    ),
-    caption: caption,
+    )
   )
   if automath {
     show table.cell: automath_rule
@@ -81,12 +90,14 @@
 }
 
 // 类 markdown 表格，使用 tablem 包实现
-#let tblm(caption: "", automath: false, ..args) = {
+#let tblm(caption: "", alignment: center + horizon, automath: false, ..args) = {
   let fig = figure(
-    tablem(
-      ..args,
-    ),
+    kind: table,
     caption: caption,
+    tablem(
+      align: alignment,
+      ..args,
+    )
   )
   if automath {
     show table.cell: automath_rule
@@ -98,12 +109,13 @@
 #let csvtable(caption: "", alignment: center + horizon, automath: false, raw) = {
   let data = csv.decode(raw.text)
   let fig = figure(
+    kind: table,
+    caption: caption,
     table(
       columns: data.at(0).len(),
       align: alignment,
       ..data.flatten()
-    ),
-    caption: caption
+    )
   )
   if automath {
     show table.cell: automath_rule
@@ -113,10 +125,12 @@
 
 // 真值表，使用 truthfy 实现
 #let truth-tbl(caption: "", ..args) = figure(
+  kind: table,
   caption: caption,
   truth-table(..args)
 )
 #let truth-tbl-empty(caption: "", ..args) = figure(
+  kind: table,
   caption: caption,
   truth-table-empty(..args)
 )
@@ -150,10 +164,9 @@
 
 // 代码块，使用 codly + i-figure 实现
 #let code(caption: "", body) = figure(
-    // disable-codly()
-    body
-  ,
+  kind: raw,
   caption: caption,
+  body
 )
 
 // icons for codly
@@ -174,10 +187,14 @@
 #let typst_svg = codly_icon("assets/typst.svg")
 #let verilog_svg = codly_icon("assets/verilog.svg")
 
-#let diagram(..args) = align(center, fletcher.diagram(
-  node-stroke: 1pt,
-  edge-stroke: 1pt,
-  mark-scale: 70%,
-  ..args
-))
+#let diagram(caption: "", ..args) = figure(
+  kind: image,
+  caption: caption,
+  fletcher.diagram(
+    node-stroke: 1pt,
+    edge-stroke: 1pt,
+    mark-scale: 70%,
+    ..args
+  )
+)
 #let edge(..args, marks: "-|>") = fletcher.edge(..args, marks: marks)
