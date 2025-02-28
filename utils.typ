@@ -1,20 +1,20 @@
 // 导入本地包
 #import "fonts.typ":*
 #import "packages/admonition/0.3.0/lib.typ": *
-#import "packages/thms/0.2.0/lib.typ": *
 
 // 导入 preview 包
 // 树、图文包裹、图标、真值表
-#import "@preview/syntree:0.2.0": syntree, tree
+#import "@preview/syntree:0.2.1": syntree, tree
 #import "@preview/treet:0.1.1": tree-list
 #import "@preview/wrap-it:0.1.1": wrap-content, wrap-top-bottom
 #import "@preview/fontawesome:0.5.0": *
 #import "@preview/cheq:0.2.2": checklist
 #import "@preview/pinit:0.2.2": *
-#import "@preview/indenta:0.0.3": fix-indent
 #import "@preview/numbly:0.1.0": numbly
 #import "@preview/oxifmt:0.2.1": strfmt
-#import "@preview/drafting:0.2.1": *
+#import "@preview/drafting:0.2.2": *
+#import "@preview/theorion:0.3.2": *
+#import cosmos.fancy: * // theorion 的样式
 
 // 假段落，deprecated
 #let fake_par = context{let b=par(box()); b; v(-measure(b+b).height)}
@@ -28,7 +28,7 @@
 }
 #let tab = indent     // alias
 #let untab = unindent
-#let notab = noindent
+#let notab(body) = noindent(body)
 
 // list, enum 的修复，来自 @OrangeX4(https://github.com/OrangeX4) 的解决方案
 // 解决编号与基线不对齐的问题，同时也恢复了 block width 和 list, enum 的间隔问题
@@ -134,12 +134,13 @@
 // 目录
 #let toc(
   depth: 4,
+  indent: 2em,
   toc_break: true
 ) = {
   set par(first-line-indent: 0pt)
   set text(font: (字体.ntl, 字体.思源黑体), size: 字号.小四)
   outline(
-    indent: true,
+    indent: indent,
     depth: depth
   )
   if toc_break {pagebreak()}
@@ -230,40 +231,6 @@
     }
     show figure.where(kind: "table"): it => {
       block(width: 100%, inset: 0pt, align(center, it))
-    }
-    it
-  }
-  doc
-}
-
-// 对各种语言的注释启用 eval，使得可以在注释中使用斜体、粗体和数学公式等
-#let comment_eval(doc) = {
-  show raw: it => {
-    let slash_lang = ("c", "c++", "cpp", "Cpp", "typ", "typc", "rust", "rs", "js", "javascript", "ts", "typescript")
-    let comment-style = if it.lang in slash_lang or it.lang == none {"//"} else {"#"}
-    show raw.line: it => {
-      let body = it.body
-      let comment-token = if "children" in it.body.fields() {
-        it.body.children.position(it => {
-          if "child" in it.fields() {
-            it.child.text.starts-with(comment-style)
-          } else {
-            it.text.starts-with(comment-style)
-          }
-        })
-      }
-      if comment-token == none {return it}
-      it.body.children.slice(0, comment-token).join()
-      let matched = it.text.match(regex(comment-style + "[\s\S]*")).text
-      let comment = matched.match(regex("^" + comment-style + "+")) // ^//+ or ^#+
-      let comment_len = if comment != none {comment.end} else {0}
-      let e = matched.slice(comment_len).trim(at: start)
-      let comment-style = if comment-style == "//" {"/"} else {comment-style}
-      text(fill: gray.darken(15%), comment-style * comment_len)
-      matched.slice(comment_len, matched.len() - e.len())
-      // change * to be \*, other wise pointers in Cpp will be regarded as bold symbol, the same reason for "<" and ">"
-      let e = e.replace("*", "\*").replace("<", "\<").replace(">", "\>")
-      text(fill: gray.darken(15%), eval(e, mode: "markup"))
     }
     it
   }

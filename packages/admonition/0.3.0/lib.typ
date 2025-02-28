@@ -13,7 +13,7 @@
   version: 0.3
   Nearly rewrite the code the implement admonitions by showybox, making it more flexible.
 */
-#import "@preview/showybox:2.0.3": showybox
+#import "@preview/showybox:2.0.4": showybox
 
 #let iconbox(
   icon: emoji.info,    // a symbol or an image
@@ -24,7 +24,7 @@
   ..args
 ) = {
   let caption = box(height: caption_size,
-    if type(icon) == "symbol" {
+    if type(icon) == symbol {
       pad(caption_size * 0.15, text(caption_size, icon))
     } else {
       image(icon, fit: "contain", width: caption_size)
@@ -295,5 +295,25 @@
   ),
   caption: caption,
   icon: icon,
+  ..args
+)
+
+#let q(..args) = showybox(
+  frame: (
+    body-color: gray.lighten(80%),
+    border-color: gray.lighten(30%),
+    radius: 0em,
+    thickness: (left: 3pt)
+  ),
+  ..args
+)
+
+#let tldr(..args) = abstract(
+  caption: "TL;DR",
+  ..args
+)
+
+#let takeaway(..args) = note(
+  caption: "Takeaway",
   ..args
 )

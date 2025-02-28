@@ -1,7 +1,0 @@
-[package]
-name = "thms"
-version = "0.2.0"
-entrypoint = "lib.typ"
-authors = ["crd233"]
-license = "MIT"
-description = "A theorem box designed using showybox, based on ctheorem."

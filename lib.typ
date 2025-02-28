@@ -27,8 +27,8 @@
   body
 ) = {
   // 信息处理和打包
-  if type(authors) == "array" {authors = authors.join(", ")} // 多作者（array）时，分隔为字符串
-  if type(date) == "datetime" {date = (date.year(), date.month(), date.day())} // 日期处理为 array
+  if type(authors) == array {authors = authors.join(", ")} // 多作者（array）时，分隔为字符串
+  if type(date) == datetime {date = (date.year(), date.month(), date.day())} // 日期处理为 array
   let infos = (
     title: title,
     title_2: title_2,
@@ -88,9 +88,15 @@
   set-page-properties(margin-left: 2cm) // drafting, set to same as page's margin x
   show: process_figure_and_equation.with(unnumbered-label: "-")
   show: checklist.with(fill: luma(95%), stroke: blue, radius: .2em)
-  show: thmrules.with(qed-symbol: $square$)  // 导入 theorem 环境
   show: shorthand // 导入 math shorthand
-  show: codly-init.with()
+  show: show-theorion.with()
+  show: zebraw-init.with(
+    background-color: (luma(240), luma(250)),
+    highlight-color: yellow.lighten(90%),
+    comment-color: blue.lighten(90%),
+    extend: false,
+  )
+  show: zebraw
   // 行内公式与文字之间的自动空格
   show math.equation.where(block: false): it => h(0.25em, weak: true) + it + h(0.25em, weak: true)
   // 矩阵用方括号显示
@@ -102,7 +108,7 @@
   // 设置字体与语言
   set text(font: 字体.宋体, size: 字号.小四, lang: lang)
   show emph: text.with(font: 字体.楷体) // 中文斜体显示为楷体
-  set par(first-line-indent: 2em)
+  set par(first-line-indent: (amount: 2em, all: true))
   // 设置 bullet list 和 enum 的 marker，相比默认更像 markdown，另外刻意调大了一点（适合老年人
   set list(marker: ([●], [○], [■], [□], [►]), tight: false, spacing: .8em)
   set enum(numbering: numbly("{1}.", "{2:a}.", "{3:i}."), full: true, tight: false, spacing: .8em)
@@ -127,36 +133,8 @@
   })
   show heading: it => it + v(6pt)
 
-  // 代码相关设置
-  codly(
-    languages: (
-      c: (name: "", icon: h(2pt)+c_svg, color: rgb("#A8B9CC")),
-      C: (name: "", icon: h(2pt)+c_svg, color: rgb("#A8B9CC")),
-      cpp: (name: "Cpp", icon: cpp_svg, color: rgb("#00599C")),
-      Cpp: (name: "Cpp", icon: cpp_svg, color: rgb("#00599C")),
-      py: (name: "Python", icon: python_svg, color: rgb(("#3D8FD1"))),
-      python: (name: "Python", icon: python_svg, color: rgb(("#3D8FD1"))),
-      rust: (name: "Rust", icon: rust_svg, color: rgb("#CE412B")),
-      java: (name: "Java", icon: java_svg, color: rgb("#5382A1")),
-      typ: (name: "Typst", icon: typst_svg, color: rgb("#FFD700")),
-      sql: (name: "SQL", icon: sql_svg, color: rgb("#F0A103")),
-      SQL: (name: "SQL", icon: sql_svg, color: rgb("#F0A103")),
-      verilog: (name: "Verilog", icon: verilog_svg, color: rgb("#FF6666")),
-      Verilog: (name: "Verilog", icon: verilog_svg, color: rgb("#FF6666")),
-    ),
-    // zebra-color: luma(250),
-    fill: luma(250),
-    // stroke: 1pt,
-    // display-name: false,
-    // display-icon: false
-  )
   // 行内代码，灰色背景
-  show raw.where(block: false): box.with(
-    fill: colors.gray,
-    inset: (x: 3pt, y: 0pt),
-    outset: (y: 3pt),
-    radius: 2pt,
-  )
+  show raw.where(block: false): box.with(fill: colors.gray, inset: (x: 3pt, y: 0pt), outset: (y: 3pt), radius: 2pt)
   // 行内代码与文字之间的自动空格
   show raw.where(block: false): it => h(0.25em, weak: true) + it + h(0.25em, weak: true)
   show raw: set text(font: (字体.meslo-mono, 字体.思源宋体)) // 代码中文字体
@@ -165,10 +143,7 @@
     show regex("pin\d"): it => pin(eval(it.text.slice(3))) // pinit package for raw
     it
   }
-  // show raw: comment_eval // maybe bugs
   // show: comment_color.with(color: green)
-
-  show: fix-indent() // 一个很 tricky 的包，需放在所有 show 规则的最后
 
   show_cover(infos: infos) // 封面
   if show_toc {toc(toc_break: toc_break, depth: toc_depth)} // 目录

@@ -1,5 +1,5 @@
-#import "@preview/quick-maths:0.1.0": shorthands
-#import "@preview/mitex:0.2.4": *
+#import "@preview/quick-maths:0.2.0": shorthands
+#import "@preview/mitex:0.2.5": *
 
 #let dcases(..args) = math.cases(..args.pos().map(math.display)) // cases with display style
 
@@ -119,7 +119,6 @@
 #let dx = $dif x$
 #let exist = $exists$
 #let st = $#h(0.44em)s.t.#h(0.44em)$ // such that
-#let is = math.text("is")
 #let iff = math.bold("iff")
 
 // ---------- 希腊字母 (siplified to 2 letters) ----------

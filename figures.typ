@@ -1,9 +1,9 @@
-#import "@preview/fletcher:0.5.3" as fletcher: diagram, node, edge
-#import "@preview/tablem:0.1.0": tablem
+#import "@preview/fletcher:0.5.5" as fletcher: diagram, node, edge
+#import "@preview/tablem:0.2.0": tablem
 #import "@preview/lovelace:0.3.0": pseudocode-list, pseudocode, line-label
-#import "@preview/truthfy:0.5.0": truth-table, truth-table-empty
-#import "@preview/codly:1.1.1": *
-#import "@preview/timeliney:0.1.0": timeline as timeliney, headerline, group, taskgroup, task, milestone
+#import "@preview/truthfy:0.6.0": truth-table, truth-table-empty
+#import "@preview/zebraw:0.4.3": *
+#import "@preview/timeliney:0.2.0": timeline as timeliney, headerline, group, taskgroup, task, milestone
 
 // 简单取代 i-figured
 #let process_figure_and_equation(unnumbered-label: "-", body) = {
@@ -105,14 +105,14 @@
   } else {fig}
 }
 
-// csv 表格，使用 csv decode 处理转为表格
-#let csvtable(caption: "", alignment: center + horizon, automath: false, raw) = {
-  let data = csv.decode(raw.text)
+// csv 表格，使用 csv 处理转为表格
+#let csvtbl(caption: "", alignment: center + horizon, automath: false, columns: 0, raw) = {
+  let data = csv(bytes(raw.text))
   let fig = figure(
     kind: table,
     caption: caption,
     table(
-      columns: data.at(0).len(),
+      columns: if columns == 0 {data.at(0).len()} else {columns},
       align: alignment,
       ..data.flatten()
     )
@@ -162,30 +162,19 @@
 }
 #let no-number = [- #hide([])] // empty line and no number
 
-// 代码块，使用 codly + i-figure 实现
-#let code(caption: "", body) = figure(
+// 代码块，使用 zebraw 实现
+#let code(
+  caption: "",
+  body,
+  ..args
+) = figure(
   kind: raw,
   caption: caption,
-  body
-)
-
-// icons for codly
-#let codly_icon(codepoint) = {
-  box(
-    height: 1em,
-    baseline: 0.1em,
-    image(codepoint)
+  zebraw(
+    body,
+    ..args
   )
-  h(0.2em)
-}
-#let c_svg = codly_icon("assets/c.svg")
-#let cpp_svg = codly_icon("assets/cpp.svg")
-#let python_svg = codly_icon("assets/python.svg")
-#let rust_svg = codly_icon("assets/rust.svg")
-#let java_svg = codly_icon("assets/java.svg")
-#let sql_svg = codly_icon("assets/sql.svg")
-#let typst_svg = codly_icon("assets/typst.svg")
-#let verilog_svg = codly_icon("assets/verilog.svg")
+)
 
 #let diagram(caption: "", ..args) = figure(
   kind: image,

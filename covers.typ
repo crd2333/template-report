@@ -1,5 +1,5 @@
-#import "@local/fonts:0.1.0": 字体, 字号
-#import "@local/utils:0.1.0": date_format
+#import "fonts.typ": 字体, 字号
+#import "utils.typ": date_format
 
 #let _info_key(body) = {
   rect(width: 100%, inset: 2pt,

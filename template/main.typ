@@ -36,7 +36,15 @@ _斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体（事实上
 中英文字体之间正常情况下会自动添加空格，像这样test一下。手动添加空格也可以（对Arial和思源字体而言），像这样 test 一下，间隙增加可以忽略不计。如果换用其它字体，可能会出现手动空格导致间隙过大的情况。
 
 === 关于缩进
-使用一个比较 tricky 的包 #link("https://github.com/flaribbit/indenta")[indenta] 来达到类似 LaTeX 中的缩进效果：两行文字间隔一行则缩进，否则不缩进。可能会遇到一些 bug，此时可以使用```typ #noindent[Something]```来取消缩进，比如下面这样：
+Typst 0.13 终于解决了首段缩进问题，通过下面的语法
+```typ
+#set par(first-line-indent: 2em)                      // 原本的语法依旧支持
+#set par(first-line-indent: (amount: 2em, all: true)) // 新的语法
+// 用 all 来控制是否应用到所有段落
+// 修复了标题后的段落，但也包括图表后的段落，个人感觉粒度有点大，设计得不太好。。。
+```
+
+可以使用```typ #noindent[Something]```来取消包裹内容的缩进，比如下面这样：
 
 #hline()
 
@@ -58,7 +66,7 @@ _斜体_与*粗体*，_Italic_ and *bold*。但是中文没有斜体（事实上
 采用连接符换行。
 #hline()
 
-#indent 另外，通过 `#indent`（或 `#tab`）能缩进内容，在 indenta 失效时可以使用。
+通过 `#indent`（或 `#tab`）能缩进内容；通过 `#unindent`（或 `#untab`）能取消缩进。
 
 == 图表测试
 === 图片
@@ -89,22 +97,36 @@ $ A or B |- A $
 $ x <= y $
 
 === 代码
-code使用codly实现，会自动捕捉所有成块原始文本，像下面这样，不一定非要调用code命令（调用code命令则是套一层 figure，加上 caption）。
+code 使用 zebraw 实现，会自动捕捉所有成块 raw text，像下面这样：
 
-#no-codly[
-  ```raw
-  disabled code
-  ```
-]
 ```raw
 enabled code
 ```
 
-#strike[代码块经过特殊处理，注释内的斜体、粗体、数学公式会启用 eval]。感觉经常遇到 bug，先禁用了（`lib.typ` 中 ```typ // show: comment_eval```）。另外可以改变注释颜色 ```typ show: comment_color.with(color: green)```（如果需要打印等用途，灰色可能难以辨认）
-#show: comment_color.with(color: green.darken(50%))
-```cpp
-cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
-```
+当然也可以显式调用 zebraw 的命令，达到更细致控制：
+
+#zebraw(
+  header: [This is a header],
+  footer: [This is a footer],
+  highlight-lines: (
+    (1, [zebraw 可以在高亮行后插入注释行，且是 *markup 模式*：_italic_, *bold*, $sum$]),
+    4,
+    ..range(7, 9) // 左闭右开
+  ),
+  lang: false,
+  ```c
+  #include <stdio.h>
+  int main() {
+    printf("Hello World!");
+    printf("Hello World!");
+    printf("Hello World!");
+    printf("Hello World!");
+    return 0;
+  }
+  ```
+)
+
+调用 code 命令则是套一层 figure，加上 caption：
 #code(
   caption: "This is a code listing",
 )[
@@ -118,6 +140,13 @@ cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
 ] <code>
 
 引用 @code
+
+可以改变注释颜色 ```typ show: comment_color.with(color: green)```（如果需要打印等用途，灰色可能难以辨认）
+
+#show: comment_color.with(color: green.darken(50%))
+```cpp
+cout << "look at the comment" << endl; // this is a comment
+```
 
 === 表格
 表格通过原生 table 封装到 figure 中，并添加自动数学环境参数：```typ automath: true```，通过正则表达式检测数字并用 `$` 包裹。
@@ -168,12 +197,12 @@ cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
   | Wally  | Third Av.  | 160 cm   |  10     |
 ]
 
-使用 typst 的数据加载语法，可以读取 csv, json 等格式的数据，以此实现了一些更加快捷（但比较简单，如果要支持合并单元格之类则较困难）的表格。比如下面这个 csv 表格：
-#csvtable(
+使用 typst 的数据加载语法，可以读取 csv, json 等格式的数据，以此实现了一些简单（不支持合并单元格）但快捷的表格。比如下面这个 csv 表格：
+#csvtbl(
   caption: "CSV Table",
   ```
-  1,2,3
-  4,5,6
+  1, 2, 3
+  4, 5, 6
   ```
 )
 
@@ -183,11 +212,13 @@ cout << "look at the comment" << endl; // _italic_, *bold*, and math $sum$
 图片测试引用 @test2，可以看到现在的编号是 2 开头。
 
 == 列表
-Bubble list 语法（更改了图标，使其更类似 markdown，且更大）和 enum 语法：
+*Bubble list 语法*（更改了图标，使其更类似 markdown，且更大）
 - 你说
   - 得对
     - 但是
       - 原神
+
+*enum 语法：*
 + 是一款
 + 由米哈游
   + 开发的
@@ -195,7 +226,7 @@ Bubble list 语法（更改了图标，使其更类似 markdown，且更大）�
     + 冒险
     + 游戏
 
-Term list 语法：
+*Term list 语法：*
 / a: Something
 / b: Something
 
@@ -253,19 +284,22 @@ Typst 中的 cetz 就像 LaTeX 中的 tikz 一样，提供强大的画图功能�
 语法树，像这样，可以用字符串解析的方式来写，不过个人更喜欢后一种自己写 `tree` 的方式，通过合理的缩进更加易读。
 #let bx(col) = box(fill: col, width: 1em, height: 1em)
 
-#grid(
-  columns:2,
-  gutter: 4em,
-  syntree(
-    nonterminal: (font: "Linux Biolinum"),
-    terminal: (fill: red),
-    child-spacing: 3em, // default 1em
-    layer-spacing: 2em, // default 2.3em
-    "[S [NP This] [VP [V is] [^NP a wug]]]"
-  ),
-  tree("colors",
-    tree("warm", bx(red), bx(orange)),
-    tree("cool", bx(blue), bx(teal)))
+#block(
+  breakable: false,
+  grid(
+    columns:2,
+    gutter: 4em,
+    syntree(
+      nonterminal: (font: "Linux Biolinum"),
+      terminal: (fill: red),
+      child-spacing: 3em, // default 1em
+      layer-spacing: 2em, // default 2.3em
+      "[S [NP This] [VP [V is] [^NP a wug]]]"
+    ),
+    tree("colors",
+      tree("warm", bx(red), bx(orange)),
+      tree("cool", bx(blue), bx(teal)))
+  )
 )
 
 #tab 文件夹型的树，像这样
@@ -319,35 +353,47 @@ Typst 中的 cetz 就像 LaTeX 中的 tikz 一样，提供强大的画图功能�
 
 内置表情(built-in emoji namespace): `#emoji.rocket` #emoji.rocket
 
-由 #link("https://fontawesome.com/download")[Font awesome] 提供的图标（需要下载字体）：#fa-github()，具体有哪些可查 #link("https://fontawesome.com/search?o=r&m=free")[Font awesome gallery]。
+由 #link("https://fontawesome.com/download")[Font awesome] 提供的图标（需下载字体）：#fa-github()，具体可查 #link("https://fontawesome.com/search?o=r&m=free")[Font awesome gallery]。
 
-=== boxes(admonitions & thms)
-下面是我自己写的基于 showybox 的 admonitions 块和定理块。
+=== boxes(admonitions & theorion)
 #note()[我自己写的admonition块]
 #info(caption: "标题与字号可以自定义", caption_size: 18pt, size: 9pt)[图标、内容字号也可以传入修改]
 
-#tab 好康且自动计数的定理块：
+以及来自 #link("https://github.com/OrangeX4/typst-theorion")[theorion] 的定理块：
 
-#theorem(title: [#text(fill: green, "This is a title")])[Now the counter increases by 1 for type `Theorem`.] <thm2>
+#theorem(title: text(fill: green, "This is a title"))[#lorem(10)] <thm1>
 
-#theorem(footer: [The showybox allowes you add footer for boxes, useful when giving some explanation.])[#lorem(10)] <thm1>
+#theorem()[#lorem(10)] <thm2>
 
-#definition[The counter will be reset after the first level of heading changes, i.e. counting within one chapter(can be changed)).]
+#definition[#lorem(10)]
 
-#corollary(title: "a title", [Another body!])[Corollary counter based on theorem(can be changed).]
+#corollary(title: "a title")[Corollary counter based on theorem.]
 
 #lemma[#lorem(20)]
 
-#proof[By default the `Proof` will not count itself.\ And the `Proof` box will have a square at the right bottom corner.]
+#proposition[#lorem(10)]
 
-#example()[By default the `example` will not count itself.]
+#proof[#lorem(10)]
 
-#noindent[
-  @thm1, @thm2
-]
+#example[#lorem(10)]
+
+#grid(
+  columns: 4,
+  column-gutter: 8pt,
+  tip-box[
+    #untab @thm1，@thm2
+  ],
+  important-box[#untab #lorem(2)],
+  warning-box[#untab #lorem(2)],
+  note-box[#untab #lorem(2)],
+  caution-box[#untab #lorem(2)],
+  theorem-box[#untab #lorem(2)],
+  quote-box[#lorem(2)],
+  emph-box[#lorem(2)],
+)
 
 === 伪代码（算法）
-lovelace包，可以用来写伪代码，body 最好用 typ，比如：
+lovelace包，可以用来写伪代码，比如：
 
 #algo(title: [caption for algorithm])[
   - *input:* integers $a$ and $b$
@@ -386,7 +432,7 @@ lovelace包，可以用来写伪代码，body 最好用 typ，比如：
 快速制作真值表，只支持 $not and or xor => <=>$，新版还支持卡诺图画法？
 #truth-tbl(caption: "真值表", $A and B$, $B or A$, $A => B$, $(A => B) <=> A$, $ A xor B$)
 
-#tab 更复杂的用法（自己填data），三个参数分别是样式函数、表头、表内容：
+更复杂的用法（自己填data），三个参数分别是样式函数、表头、表内容：
 #truth-tbl-empty(
   caption: "空真值表",
   sc: (a) => {if (a) {"T"} else {"F"}},
@@ -400,7 +446,7 @@ lovelace包，可以用来写伪代码，body 最好用 typ，比如：
   column-gutter: 8pt,
   [
     - [ ] 加入更多layouts，比如前言、附录
-    - [x] 重构代码，使得可以根据语言切换文档类型
+    - [x] 重构代码，根据语言切换文档类型
     - [-] Jupiter
     - [/] Saturn
     - [>] Forwarded
@@ -418,7 +464,6 @@ lovelace包，可以用来写伪代码，body 最好用 typ，比如：
     - [k] key
     - [w] win
     - [u] up
-    - [d] down
   ]
 )
 
