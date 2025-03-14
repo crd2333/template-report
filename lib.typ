@@ -103,8 +103,11 @@
   set math.mat(delim: "[")
   set math.vec(delim: "[")
   // 引用与链接字体蓝色显示
-  show ref: set text(colors.blue)
-  show link: set text(colors.blue)
+  show ref: set text(fill: colors.blue)
+  show link: it => {
+    set text(fill: colors.blue)
+    it + h(2pt) + text(size: 8.5pt, fajumplink)
+  }
   // 设置字体与语言
   set text(font: 字体.宋体, size: 字号.小四, lang: lang)
   show emph: text.with(font: 字体.楷体) // 中文斜体显示为楷体

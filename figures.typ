@@ -5,6 +5,28 @@
 #import "@preview/zebraw:0.4.3": *
 #import "@preview/timeliney:0.2.0": timeline as timeliney, headerline, group, taskgroup, task, milestone
 
+// 一些图标
+#let icon(path) = box(
+  baseline: 0.125em,
+  height: 1.0em,
+  width: 1.25em,
+  align(center + horizon, image(path))
+)
+#let faAngleRight = icon("assets/icons/fa-angle-right.svg")
+#let faAward = icon("assets/icons/fa-award.svg")
+#let faBuildingColumns = icon("assets/icons/fa-building-columns.svg")
+#let faCode = icon("assets/icons/fa-code.svg")
+#let faEnvelope = icon("assets/icons/fa-envelope.svg")
+#let faGithub = icon("assets/icons/fa-github.svg")
+#let faGraduationCap = icon("assets/icons/fa-graduation-cap.svg")
+#let faLinux = icon("assets/icons/fa-linux.svg")
+#let faPhone = icon("assets/icons/fa-phone.svg")
+#let faWindows = icon("assets/icons/fa-windows.svg")
+#let faWrench = icon("assets/icons/fa-wrench.svg")
+#let faWork = icon("assets/icons/fa-work.svg")
+#let falink = icon("assets/icons/fa-link.svg")
+#let fajumplink = icon("assets/icons/fa-jumplink.svg")
+
 // 简单取代 i-figured
 #let process_figure_and_equation(unnumbered-label: "-", body) = {
   show heading.where(level:1):it => { // reset counters when new chapter starts

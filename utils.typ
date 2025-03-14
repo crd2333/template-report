@@ -214,10 +214,10 @@
     show math.equation.where(block: true): eq => {
       block(width: 100%, inset: 0pt, align(center, eq))
     }
-    show figure.where(kind: "image"): it => {
+    show figure.where(kind: image): it => {
       block(width: 100%, inset: 0pt, align(center, it))
     }
-    show figure.where(kind: "table"): it => {
+    show figure.where(kind: table): it => {
       block(width: 100%, inset: 0pt, align(center, it))
     }
     it
@@ -226,10 +226,10 @@
     show math.equation.where(block: true): eq => {
       block(width: 100%, inset: 0pt, align(center, eq))
     }
-    show figure.where(kind: "image"): it => {
+    show figure.where(kind: image): it => {
       block(width: 100%, inset: 0pt, align(center, it))
     }
-    show figure.where(kind: "table"): it => {
+    show figure.where(kind: table): it => {
       block(width: 100%, inset: 0pt, align(center, it))
     }
     it
