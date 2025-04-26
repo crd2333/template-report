@@ -4,6 +4,8 @@
 #import "@preview/truthfy:0.6.0": truth-table, truth-table-empty
 #import "@preview/zebraw:0.4.3": *
 #import "@preview/timeliney:0.2.0": timeline as timeliney, headerline, group, taskgroup, task, milestone
+#import "packages/diagbox/0.1.0/lib.typ": *
+#import "packages/admonition/0.3.0/lib.typ": *
 
 // 一些图标
 #let icon(path) = box(

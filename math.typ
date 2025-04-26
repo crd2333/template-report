@@ -1,9 +1,28 @@
 #import "@preview/quick-maths:0.2.1": shorthands
 #import "@preview/mitex:0.2.5": *
 
+// ---------- 数学公式中的函数 ----------
 #let dcases(..args) = math.cases(..args.pos().map(math.display)) // cases with display style
-
 #let cnum(num) = str.from-unicode(9311 + num)  // 带圈数字
+#let iprod(a, b) = $lr(angle.l #a mid(|) #b angle.r)$
+#let rbox(fill: false, inset: 4pt, baseline: 4pt, ..args, body) = box(baseline: baseline, inset: inset, fill: if (fill) {red.lighten(50%)}, stroke: red, $display(body)$) // boxes for math
+#let bbox(fill: false, inset: 4pt, baseline: 4pt, ..args, body) = box(baseline: baseline, inset: inset, fill: if (fill) {blue.lighten(50%)}, stroke: blue, $display(body)$)
+#let gbox(fill: false, inset: 4pt, baseline: 4pt, ..args, body) = box(baseline: baseline, inset: inset, fill: if (fill) {green.lighten(50%)}, stroke: green, $display(body)$)
+#let obox(fill: false, inset: 4pt, baseline: 4pt, ..args, body) = box(baseline: baseline, inset: inset, fill: if (fill) {orange.lighten(50%)}, stroke: orange, $display(body)$)
+#let ybox(fill: false, inset: 4pt, baseline: 4pt, ..args, body) = box(baseline: baseline, inset: inset, fill: if (fill) {yellow.lighten(50%)}, stroke: yellow, $display(body)$)
+#let cancelbox(
+  fill: false, inset: 4pt, baseline: 4pt,
+  cross: true, stroke: red,
+  ..args, body
+) = box(
+  baseline: baseline, inset: inset, fill: if (fill) {red}, stroke: red,
+  math.cancel(
+    cross: cross,
+    stroke: stroke,
+    length: 100% + 3pt + inset,
+    body
+  )
+)
 
 // ---------- 文本运算符 ----------
 #let argmax = math.op("argmax", limits: true)

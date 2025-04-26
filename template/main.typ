@@ -155,14 +155,12 @@ cout << "look at the comment" << endl; // this is a comment
   caption: "《计算机组成》：Multiplier",
   fill: (x, y) => if y == 0 {aqua.lighten(40%)},
   columns: 4,
-  [Iteration],[Step],[Multiplicand],[Product / Multiplicator],
+  bdiagbox[Iteration][operations],[Step],[Multiplicand],[Product / Multiplicator],
   [0],[initial values],[01100010],[00000000 00010010],
   table.cell(rowspan: 2)[1],[0 $=>$ no op],[01100010],[00000000 00010010],
   [shift right],[01100010],[00000000 00001001],
   table.cell(rowspan: 2)[2],[1 $=>$ prod += Mcand],[01100010],[01100010 00001001],
   [shift right],[01100010],[00110001 00000100],
-  table.cell(rowspan: 2)[3],[0 $=>$ no op],[01100010],[00110001 00000100],
-  [shift right],[01100010],[00011000 10000010],
   table.cell(colspan: 4)[......]
 )
 
